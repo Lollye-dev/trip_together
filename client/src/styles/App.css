@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+
+:root {
+  --black: #0d1117;
+  --white: #f8f9fb;
+  --grey: #999999;
+  --background: #f2f2f2;
+  --primary-button: #1b5e1d;
+  --status: #fbecc3;
+  --button-hover: #247c28;
+  --brown: #ae8179;
+  --light-brown: lch(92.72% 8.07 59.2);
+  --light-green: #c6d6c6;
+  --grey-text: #555;
+
+  --button-radius: 10px;
+  --title-font: "Playfair Display", serif;
+  --body-text: "Source Sans 3", sans-serif;
+  --font-size-XL: 48px;
+  --font-size-L: 36px;
+  --font-size-M: 24px;
+  --font-size-S: 22px;
+  --font-size-XS: 16px;
+
+  --space-XL: 40px;
+  --space-L: 24px;
+  --space-M: 16px;
+  --space-S: 8px;
+  --space-XS: 4px;
+
+  /* Clamp variables pour le responsive */
+  /* Spacing - Padding, margin, gap */
+  --clamp-spacing-xl: clamp(2rem, 5vw, 3.75rem);
+  --clamp-spacing-lg: clamp(1.5rem, 3vw, 2rem);
+  --clamp-spacing-md: clamp(1rem, 3vw, 2rem);
+  --clamp-spacing-sm: clamp(0.75rem, 2vw, 1rem);
+  --clamp-spacing-xs: clamp(0.5rem, 1.5vw, 0.75rem);
+
+  /* Font sizes */
+  --clamp-font-xl: clamp(2rem, 5vw, 2.5rem);
+  --clamp-font-lg: clamp(1.25rem, 3vw, 1.5rem);
+  --clamp-font-md: clamp(1rem, 2.5vw, 1.1rem);
+  --clamp-font-sm: clamp(0.875rem, 2vw, 1rem);
+  --clamp-font-xs: clamp(0.75rem, 1.5vw, 0.875rem);
+
+  /* Border radius */
+  --clamp-radius-lg: clamp(12px, 3vw, 20px);
+  --clamp-radius-md: clamp(8px, 2vw, 12px);
+  --clamp-radius-sm: clamp(6px, 1.5vw, 8px);
+
+  /* Dimensions - Width, height */
+  --clamp-size-lg: clamp(80px, 12vw, 100px);
+  --clamp-size-md: clamp(60px, 10vw, 80px);
+  --clamp-size-sm: clamp(2rem, 5vw, 2.25rem);
+}
+
+main {
+  background-color: var(--background);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--brown);
+  background-color: var(--light-brown);
+  border-left: 4px solid var(--brown);
+  margin: 2rem 0;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.loading-text {
+  display: flex;
+  background-color: #f5f5f5;
+  color: #444;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+}
+.loading-text::after {
+  content: "";
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0% {
+    content: "";
+  }
+  33% {
+    content: ".";
+  }
+  66% {
+    content: "..";
+  }
+  100% {
+    content: "...";
+  }
+}

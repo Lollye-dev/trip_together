@@ -16,7 +16,7 @@ const createVoteSchema = Joi.object({
   comment: Joi.string().max(500).allow(null, "").optional(),
 });
 
-const selectStepsByTrip: RequestHandler = async (req, res, next) => {
+const browseSteps: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.tripId);
     if (Number.isNaN(tripId)) {
@@ -44,7 +44,7 @@ const selectStepsByTrip: RequestHandler = async (req, res, next) => {
       });
     }
 
-    const steps = await stepRepository.getStepsWithVotes(tripId);
+    const steps = await stepRepository.getStepWithVotes(tripId);
 
     const stepsWithStatus: StepWithStatus[] = steps.map((step) => {
       if (step.is_initial) {
@@ -169,7 +169,7 @@ const addVote: RequestHandler = async (req, res, next) => {
   }
 };
 
-const browseVote: RequestHandler = async (req, res, next) => {
+const browseVotes: RequestHandler = async (req, res, next) => {
   try {
     const stepId = Number(req.params.id);
 
@@ -199,7 +199,7 @@ const browseVote: RequestHandler = async (req, res, next) => {
       });
     }
 
-    const allVotes = await stepRepository.selectByStep(stepId);
+    const allVotes = await stepRepository.selectVotesByStep(stepId);
 
     const yes = allVotes.filter((v) => v.vote).length;
     const no = allVotes.filter((v) => !v.vote).length;
@@ -225,19 +225,22 @@ const deleteStep: RequestHandler = async (req, res, next) => {
     const tripId = Number(req.params.tripId);
     const authReq = req as RequestWithAuth;
     const userId = Number(authReq.auth.sub);
-    // Vérifier si l'étape existe
+
     const step = await stepRepository.getStepWithTrip(stepId);
     if (!step) return res.status(404).json({ error: "Étape introuvable" });
-    // Vérifier que l'utilisateur est bien le propriétaire du voyage
+
     const isOwner = await tripRepository.isOwner(tripId, userId);
-    if (!isOwner) return res.status(403).json({ error: "Non autorisé" });
+    if (!isOwner)
+      return res
+        .status(403)
+        .json({ error: "Seul le créateur du voyage peut supprimer une étape" });
     await stepRepository.delete(stepId);
     res.sendStatus(204);
   } catch (err) {
     next(err);
   }
 };
-const addStepCity: RequestHandler = async (req, res, next) => {
+const addStep: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.tripId);
     if (Number.isNaN(tripId)) {
@@ -262,10 +265,13 @@ const addStepCity: RequestHandler = async (req, res, next) => {
       });
     }
     const { city, country, image_url } = req.body;
-    if (typeof city !== "string" || typeof country !== "string") {
-      return res
-        .status(400)
-        .json({ error: "La ville et le pays sont requis." });
+    if (
+      typeof city !== "string" ||
+      typeof country !== "string" ||
+      !city.trim() ||
+      !country.trim()
+    ) {
+      return res.status(400).json({ error: "Un lieu est requis" });
     }
     let finalImageUrl = image_url;
     if (!finalImageUrl) {
@@ -278,6 +284,9 @@ const addStepCity: RequestHandler = async (req, res, next) => {
       image_url: finalImageUrl || "/images/default-city.jpg",
       user_id: userId,
     });
+
+    await stepRepository.create(userId, stepId, true, null);
+
     return res.status(201).json({
       trip: {
         id: trip.id,
@@ -304,9 +313,9 @@ const addStepCity: RequestHandler = async (req, res, next) => {
 };
 
 export default {
-  selectStepsByTrip,
+  browseSteps,
   addVote,
-  browseVote,
-  addStepCity,
+  browseVotes,
+  addStep,
   deleteStep,
 };

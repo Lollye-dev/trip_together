@@ -1,0 +1,42 @@
+.trip-budget-page {
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.budget-summary {
+  margin: clamp(1.5rem, 5vw, 2.5rem) 0;
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.budget-card {
+  background: white;
+  border-radius: clamp(8px, 2vw, 10px);
+  padding: clamp(0.75rem, 2vw, 0.9rem);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  width: min(calc(50% - 0.5rem), 600px);
+  flex: 1 1 auto;
+  min-width: clamp(150px, 45vw, 300px);
+}
+
+.card-label {
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  color: #666;
+  margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
+}
+
+.budget-card h3 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 600;
+  margin: 0;
+  word-break: break-word;
+}
+
+.positive h3 {
+  color: #1e7e34;
+}
+
+.negative h3 {
+  color: #c82333;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
-import "./styles/invitation.css";
+import "../styles/invitation.css";
 import TripInfos from "../components/TripInfos";
 import { useAuth } from "../contexts/AuthContext";
 import type { invitationType } from "../types/invitationType";
@@ -24,14 +24,22 @@ function Invitation() {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/trips/${id}`)
+    const token = localStorage.getItem("token") || auth?.token;
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/trips/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
       .then(async (response) => {
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+          navigate("/login");
+          return;
+        }
         if (!response.ok) {
-          if (response.status === 401) {
-            toast.error("Veuillez vous connecter pour accéder à ce voyage.");
-            return;
-          }
           throw new Error("Erreur chargement voyage");
         }
         const data = await response.json();
@@ -77,20 +85,31 @@ function Invitation() {
         toast.error("Invitation introuvable ou accès non autorisé");
         navigate("/");
       });
-  }, [navigate, invitationId, id]);
+  }, [navigate, invitationId, id, auth?.token]);
 
   async function invitationResponded(status: "accepted" | "refused") {
     if (!invitationId) return;
 
     try {
+      const token = localStorage.getItem("token") || auth?.token;
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/invitation/${invitationId}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ status }),
         },
       );
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+        navigate("/login");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);

@@ -1,0 +1,46 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 40, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  z-index: 9999;
+  padding: clamp(1rem, 2vw, 2rem) 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--clamp-spacing-sm);
+  right: var(--clamp-spacing-sm);
+  z-index: 10;
+
+  width: var(--clamp-size-sm);
+  height: var(--clamp-size-sm);
+  border: none;
+
+  background-color: transparent;
+  color: #17222e;
+
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  font-weight: 700;
+  cursor: pointer;
+
+  display: grid;
+  place-items: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+}
+
+.modal-content {
+  background: transparent;
+  border-radius: 16px;
+  padding: var(--clamp-spacing-md);
+  width: min(700px, 85vw);
+  max-width: 100%;
+}

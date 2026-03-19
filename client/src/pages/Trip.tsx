@@ -1,7 +1,7 @@
 import NavTabs from "../components/NavTabs";
 import TripInfos from "../components/TripInfos";
 import { useAuth } from "../contexts/AuthContext";
-import "./styles/Trip.css";
+import "../styles/Trip.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
@@ -51,7 +51,6 @@ function Trip() {
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
@@ -86,7 +85,6 @@ function Trip() {
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}/steps`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
@@ -144,6 +142,7 @@ function Trip() {
                     currentUserId={currentUserId}
                     tripId={tripId}
                     memberCount={memberCount}
+                    isOwner={myTrip?.user_id === currentUserId}
                   />
                 ))
               ) : (

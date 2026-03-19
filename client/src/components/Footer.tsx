@@ -1,4 +1,4 @@
-import "../pages/styles/Footer.css";
+import "../styles/Footer.css";
 import { Link } from "react-router";
 
 function Footer() {

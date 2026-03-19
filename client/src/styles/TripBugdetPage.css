@@ -1,0 +1,205 @@
+.expenses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+}
+
+.add-expense-btn {
+  background-color: var(--primary-button);
+  color: white;
+  border: none;
+  padding: clamp(0.5rem, 1vw, 0.6rem) clamp(0.75rem, 1.5vw, 1.2rem);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  font-weight: 500;
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  min-height: 40px;
+}
+
+.add-expense-btn:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.category-block {
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+}
+
+.category-title {
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
+  color: #444;
+}
+
+.expense-card {
+  background: white;
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(0.8rem, 2vw, 1.2rem);
+  margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
+  border: 1px solid rgba(0, 0, 0, 0.392);
+}
+
+.expense-description {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  padding-bottom: clamp(0.5rem, 1vw, 0.625rem);
+}
+
+.expense-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  flex-wrap: wrap;
+}
+
+.expense-left {
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  align-items: center;
+  min-width: 0;
+}
+
+.expense-icon {
+  width: clamp(36px, 8vw, 40px);
+  height: clamp(36px, 8vw, 40px);
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+.expense-paid {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: #666;
+  word-break: break-word;
+}
+
+.expense-right {
+  text-align: right;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.expense-right strong {
+  display: block;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  word-break: break-word;
+}
+
+.expense-right span {
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  color: #777;
+}
+
+.expense-divider {
+  height: 1px;
+  background: grey;
+  margin: clamp(0.75rem, 1.5vw, 1rem) 0;
+}
+
+.expense-debt {
+  margin-top: clamp(0.75rem, 1.5vw, 1rem);
+  font-size: clamp(0.85rem, 1.8vw, 0.9rem);
+}
+
+.debt-positive {
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: clamp(0.6rem, 1.5vw, 0.625rem);
+  border-radius: clamp(6px, 1.5vw, 8px);
+}
+
+.debt-negative {
+  color: #dc2626;
+  background: #fef2f2;
+  padding: clamp(0.6rem, 1.5vw, 0.625rem);
+  border-radius: clamp(6px, 1.5vw, 8px);
+}
+
+.debt-negative p {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  margin: 0;
+}
+
+.debt-positive p {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  margin: 0;
+}
+
+.debt-positive div {
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  padding-top: clamp(0.125rem, 0.5vw, 0.125rem);
+  margin: 0;
+}
+
+.delete-expense-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: clamp(0.2rem, 0.5vw, 0.3rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: clamp(1rem, 3vw, 12rem);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.trash-icon {
+  width: clamp(18px, 4vw, 20px);
+  height: clamp(18px, 4vw, 20px);
+  color: #c0392b;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.delete-expense-btn:hover .trash-icon {
+  transform: scale(1.15);
+  opacity: 0.8;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.modal {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+}
+
+.modal h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

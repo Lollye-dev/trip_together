@@ -1,29 +1,49 @@
 import { useRef, useState } from "react";
 import type { FormEventHandler } from "react";
 import { Link, useNavigate } from "react-router";
-import "./styles/Auth.css";
+import { useEmailValidation } from "../hooks/useEmailValidation";
+import "../styles/Login.css";
 
 import { useAuth } from "../contexts/AuthContext";
 
 function Login() {
-  const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { email, emailError, handleEmailChange, handleEmailBlur } =
+    useEmailValidation();
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     setError("");
 
+    if (!email) {
+      setError("Veuillez entrer votre email");
+      return;
+    }
+
+    if (emailError) {
+      setError("Veuillez entrer une adresse email valide");
+      return;
+    }
+
+    if (!passwordRef.current?.value) {
+      setError("Veuillez entrer votre mot de passe");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
-          method: "post",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: emailRef.current?.value,
+            email,
             password: passwordRef.current?.value,
           }),
         },
@@ -46,6 +66,8 @@ function Login() {
     } catch (err) {
       console.error(err);
       setError("Impossible de se connecter au serveur");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,13 +85,19 @@ function Login() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="input-group">
             <input
-              ref={emailRef}
               type="email"
               id="email"
-              className="form-input"
+              className={`form-input ${emailError ? "input-error" : ""}`}
               placeholder="Email"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              onBlur={handleEmailBlur}
               required
             />
+            {emailError && <span className="error-text">⚠️ {emailError}</span>}
+            {email && !emailError && (
+              <span className="validation-icon">✅</span>
+            )}
           </div>
           <div className="input-group">
             <input
@@ -77,13 +105,18 @@ function Login() {
               type="password"
               id="password"
               className="form-input"
+              autoComplete="current-password"
               placeholder="Mot de passe"
               required
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            SE CONNECTER
+          <button
+            type="submit"
+            className="btn-primary"
+            disabled={isLoading || !!emailError || !email}
+          >
+            {isLoading ? "Connexion en cours..." : "SE CONNECTER"}
           </button>
         </form>
         <div className="footer-login">

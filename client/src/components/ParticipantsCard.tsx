@@ -1,4 +1,4 @@
-import "../pages/styles/ParticipantsCard.css";
+import "../styles/ParticipantsCard.css";
 
 function ParticipantsCard() {
   return (

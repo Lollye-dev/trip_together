@@ -1,4 +1,4 @@
-import "../pages/styles/BudgetCard.css";
+import "../styles/BudgetCard.css";
 
 function BudgetCard() {
   return (

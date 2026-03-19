@@ -1,5 +1,5 @@
 import type { Guest } from "../types/invitationType";
-import "../pages/styles/Guests.css";
+import "../styles/Guests.css";
 
 type GuestsProps =
   | {
@@ -7,12 +7,14 @@ type GuestsProps =
       invited: Guest[];
       type: "attendees";
       delete?: (invitation: Guest) => void;
+      isOrganizer?: boolean;
     }
   | {
       title: string;
       invited: Guest[];
       type: "others";
       delete?: (invitation: Guest) => void;
+      isOrganizer?: boolean;
     };
 
 function Guests(props: GuestsProps) {
@@ -68,14 +70,16 @@ function Guests(props: GuestsProps) {
               {props.type === "attendees" ? (
                 invitation.role === "organisateur" ? (
                   <span className="badge badge-organisateur">Organisateur</span>
-                ) : (
-                  <span
+                ) : props.isOrganizer ? (
+                  <button
+                    type="button"
                     className="badge badge-accepted"
                     onClick={() => props.delete?.(invitation)}
-                    onKeyUp={() => props.delete?.(invitation)}
                   >
                     Retirer
-                  </span>
+                  </button>
+                ) : (
+                  <span className="badge badge-participant">Participant</span>
                 )
               ) : invitation.inviteState === "refuse" ? (
                 <>

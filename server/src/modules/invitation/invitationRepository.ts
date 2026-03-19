@@ -108,6 +108,20 @@ class invitationRepository {
     return rows as Invitation[];
   }
 
+  async findByEmailAndTrip(
+    email: string,
+    tripId: number,
+  ): Promise<Invitation | null> {
+    const [rows] = await databaseClient.query<Rows>(
+      `SELECT * FROM invitation
+      WHERE email = ?
+      AND trip_id = ?`,
+      [email, tripId],
+    );
+    if (rows.length === 0) return null;
+    return rows[0] as Invitation;
+  }
+
   async deleteInvitation(tripId: number, userId: number): Promise<boolean> {
     await databaseClient.query(
       `
@@ -130,6 +144,12 @@ class invitationRepository {
     );
 
     return result.affectedRows === 1;
+  }
+
+  async deleteByTrip(tripId: number): Promise<void> {
+    await databaseClient.query("DELETE FROM invitation WHERE trip_id = ?", [
+      tripId,
+    ]);
   }
 }
 

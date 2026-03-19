@@ -1,0 +1,75 @@
+.add-step-form-container {
+  display: flex;
+  padding-top: 3rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  font-family: var(--body-text);
+}
+
+.add-step-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  max-width: 800px;
+  width: 100%;
+}
+
+.add-step-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.add-step-form-group label {
+  font-weight: 600;
+  color: #333;
+  margin-left: 0.5rem;
+}
+
+.add-step-form-group input {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  outline: none;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s;
+}
+
+.add-step-form-group input:focus {
+  border-color: #4caf50;
+  background-color: white;
+}
+
+.add-btn {
+  border: 1px solid var(--primary-button);
+  color: white;
+  background-color: var(--primary-button);
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: clamp(6px, 1.5vw, 10px);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.add-btn:hover {
+  background-color: var(--light-green);
+  color: var(--primary-button);
+}
+
+gmp-place-autocomplete {
+  background-color: rgb(218, 222, 218);
+  color-scheme: light;
+  border-radius: 9px;
+  border: 0px solid rgb(209, 213, 219);
+}

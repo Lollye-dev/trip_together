@@ -1,0 +1,560 @@
+/* ========================================
+   RESPONSIVE.CSS - BREAKPOINTS CENTRALISÉS
+   Mobile-first approach
+   ======================================== */
+
+/* ========================================
+   VARIABLES DE BREAKPOINTS
+   ======================================== */
+
+:root {
+  /* Breakpoints */
+  --breakpoint-sm: 640px; /* Mobile petit */
+  --breakpoint-md: 768px; /* Tablette petite */
+  --breakpoint-lg: 1024px; /* Tablette grande / Desktop petit */
+  --breakpoint-xl: 1280px; /* Desktop standard */
+  --breakpoint-2xl: 1536px; /* Desktop grand */
+
+  /* Largeurs max par écran */
+  --max-width-container: 1200px;
+  --max-width-container-sm: 100%;
+  --max-width-container-md: 95%;
+  --max-width-container-lg: 90%;
+}
+
+/* ========================================
+   RESET ET MOBILE-FIRST
+   ======================================== */
+
+body {
+  font-size: clamp(14px, 2.5vw, 16px);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ========================================
+   GRILLES RESPONSIVES
+   ======================================== */
+
+/* Grille générique 1 colonne (mobile) */
+.responsive-grid-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--clamp-spacing-md);
+  padding: var(--clamp-spacing-md);
+}
+
+/* Grille générique 2 colonnes */
+.responsive-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--clamp-spacing-md);
+  padding: var(--clamp-spacing-md);
+}
+
+/* Grille générique 3 colonnes */
+.responsive-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--clamp-spacing-md);
+  padding: var(--clamp-spacing-md);
+}
+
+/* Grille générique 4 colonnes */
+.responsive-grid-4 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--clamp-spacing-md);
+  padding: var(--clamp-spacing-md);
+}
+
+/* ========================================
+   TABLETTE (md: 768px+)
+   ======================================== */
+
+@media (min-width: 768px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .responsive-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .responsive-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ========================================
+   TABLETTE GRANDE / DESKTOP PETIT (lg: 1024px+)
+   ======================================== */
+
+@media (min-width: 1024px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .responsive-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .responsive-grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========================================
+   DESKTOP STANDARD (xl: 1280px+)
+   ======================================== */
+
+@media (min-width: 1280px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .responsive-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .responsive-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ========================================
+   TYPOGRAPHIE RESPONSIVE
+   ======================================== */
+
+h1 {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  margin: clamp(0.5rem, 2vw, 1.5rem) 0;
+}
+
+h2 {
+  font-size: clamp(1.25rem, 4vw, 2.25rem);
+  margin: clamp(0.5rem, 1.5vw, 1.25rem) 0;
+}
+
+h3 {
+  font-size: clamp(1rem, 3vw, 1.75rem);
+  margin: clamp(0.5rem, 1vw, 1rem) 0;
+}
+
+h4,
+h5,
+h6 {
+  font-size: clamp(0.875rem, 2.5vw, 1.25rem);
+  margin: clamp(0.25rem, 0.75vw, 0.75rem) 0;
+}
+
+p {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  margin: clamp(0.5rem, 1vw, 1rem) 0;
+}
+
+/* ========================================
+   SPACING RESPONSIVE
+   ======================================== */
+
+.padding-responsive {
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.padding-responsive-sm {
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.margin-responsive {
+  margin: clamp(1rem, 4vw, 3rem);
+}
+
+.margin-responsive-sm {
+  margin: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.gap-responsive {
+  gap: clamp(0.5rem, 2vw, 2rem);
+}
+
+/* ========================================
+   FLEX RESPONSIVE
+   ======================================== */
+
+.flex-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+@media (min-width: 768px) {
+  .flex-responsive {
+    flex-direction: row;
+  }
+}
+
+/* ========================================
+   CONTAINER / MAX-WIDTH RESPONSIVE
+   ======================================== */
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 3vw, 2rem);
+  padding-right: clamp(1rem, 3vw, 2rem);
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+
+/* ========================================
+   BUTTONS RESPONSIVE
+   ======================================== */
+
+button,
+a.btn {
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  min-width: 0;
+  width: auto;
+}
+
+button.btn-full,
+a.btn.btn-full {
+  width: 100%;
+}
+
+/* Mobile buttons empilés */
+@media (max-width: 767px) {
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .button-group > button,
+  .button-group > a {
+    width: 100%;
+  }
+}
+
+/* Desktop buttons côte à côte */
+@media (min-width: 768px) {
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .button-group > button,
+  .button-group > a {
+    width: auto;
+  }
+}
+
+/* ========================================
+   FORMULAIRES RESPONSIVE
+   ======================================== */
+
+.form-responsive {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding-left: clamp(0.75rem, 2vw, 1rem);
+  padding-right: clamp(0.75rem, 2vw, 1rem);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
+  font-weight: 600;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+/* ========================================
+   IMAGES RESPONSIVE
+   ======================================== */
+
+.img-responsive {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ========================================
+   NAVBAR / HEADER RESPONSIVE
+   ======================================== */
+
+.header-responsive {
+  width: 100%;
+  padding: clamp(0.5rem, 2vw, 1.5rem) clamp(1rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 1rem);
+}
+
+.header-responsive-logo {
+  width: clamp(2rem, 8vw, 4rem);
+  height: auto;
+}
+
+.header-responsive-title {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-weight: 700;
+}
+
+.header-responsive-nav {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .header-responsive-nav {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    margin-top: 0;
+    gap: clamp(1rem, 2vw, 2rem);
+  }
+}
+
+/* ========================================
+   CARDS RESPONSIVE
+   ======================================== */
+
+.card-responsive {
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  box-shadow: 0 clamp(1px, 0.5vw, 4px) clamp(4px, 1vw, 12px) rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-responsive:hover {
+  transform: translateY(clamp(-2px, -0.5vw, -4px));
+  box-shadow: 0 clamp(2px, 1vw, 8px) clamp(8px, 2vw, 20px) rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   VISIBILITY HELPERS
+   ======================================== */
+
+.hidden-mobile {
+  display: none !important;
+}
+
+.hidden-tablet {
+  display: none !important;
+}
+
+.hidden-desktop {
+  display: block !important;
+}
+
+@media (min-width: 640px) {
+  .hidden-mobile {
+    display: block !important;
+  }
+
+  .hidden-tablet {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hidden-tablet {
+    display: block !important;
+  }
+
+  .hidden-desktop {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   TEXT RESPONSIVE
+   ======================================== */
+
+.text-center-mobile {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .text-center-mobile {
+    text-align: left;
+  }
+}
+
+.text-responsive {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ========================================
+   WIDTH RESPONSIVE
+   ======================================== */
+
+.width-responsive {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .width-50 {
+    width: 50%;
+  }
+
+  .width-33 {
+    width: 33.333%;
+  }
+
+  .width-25 {
+    width: 25%;
+  }
+}
+
+/* ========================================
+   FOOTER RESPONSIVE
+   ======================================== */
+
+.footer-responsive {
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem);
+  display: grid;
+  gap: clamp(1rem, 3vw, 2rem);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .footer-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ========================================
+   MODAL RESPONSIVE
+   ======================================== */
+
+.modal-responsive {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-responsive-content {
+  width: calc(100% - clamp(1rem, 4vw, 2rem));
+  max-width: 500px;
+  max-height: calc(100vh - clamp(1rem, 4vw, 2rem));
+  overflow-y: auto;
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.5rem, 3vw, 2rem);
+}
+
+@media (min-width: 768px) {
+  .modal-responsive-content {
+    width: auto;
+  }
+}
+
+/* ========================================
+   DISPLAY RESPONSIVE
+   ======================================== */
+
+.display-responsive-block {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .display-responsive-inline {
+    display: inline;
+  }
+
+  .display-responsive-inline-block {
+    display: inline-block;
+  }
+}
+
+/* ========================================
+   ÉPAIS RESPONSIVE (Orientation)
+   ======================================== */
+
+@media (orientation: landscape) and (max-height: 600px) {
+  h1 {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .margin-responsive {
+    margin: clamp(0.25rem, 1vh, 0.5rem);
+  }
+}
+
+@media (orientation: portrait) {
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-square {
+    aspect-ratio: 1;
+  }
+
+  .aspect-3-4 {
+    aspect-ratio: 3 / 4;
+  }
+}

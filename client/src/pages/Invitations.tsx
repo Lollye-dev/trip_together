@@ -4,9 +4,10 @@ import { toast } from "react-toastify";
 import Guests from "../components/Guests";
 import NavTabs from "../components/NavTabs";
 import TripInfos from "../components/TripInfos";
+import { useAuth } from "../contexts/AuthContext";
 import type { Guest, invitationType } from "../types/invitationType";
 import type { TheTrip } from "../types/tripType";
-import "./styles/invitations.css";
+import "../styles/invitations.css";
 
 type RouteParams = {
   id: string;
@@ -25,6 +26,7 @@ type InvitationsResponse =
 function Invitations() {
   const { id } = useParams<RouteParams>();
   const tripId = Number(id);
+  const { auth } = useAuth();
 
   const [trip, setTrip] = useState<TheTrip | null>(null);
   const [mytrip, setmyTrip] = useState<TheTrip | null>(null);
@@ -36,6 +38,8 @@ function Invitations() {
   const [deleteInvitation, setdeleteInvitation] = useState<Guest | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token") || auth?.token;
 
   useEffect(() => {
     if (!tripId) {
@@ -52,14 +56,21 @@ function Invitations() {
 
     setLoading(true);
     setError(null);
-    fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}`)
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
       .then(async (response) => {
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+          navigate("/login");
+          return;
+        }
         if (!response.ok) {
-          if (response.status === 401) {
-            toast.error("Veuillez vous connecter pour accéder à ce voyage.");
-            return;
-          }
           throw new Error("Erreur chargement voyage");
         }
         const data = await response.json();
@@ -70,8 +81,19 @@ function Invitations() {
         toast.error("Impossible de charger le voyage");
       });
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}/invitations`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}/invitations`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then(async (response) => {
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+          navigate("/login");
+          return;
+        }
+
         const result: InvitationsResponse = await response.json();
 
         if (response.status === 400) {
@@ -153,7 +175,7 @@ function Invitations() {
       .finally(() => {
         setLoading(false);
       });
-  }, [tripId, navigate]);
+  }, [tripId, navigate, token]);
 
   const removeParticipant = (userId: number) => {
     if (!tripId) return;
@@ -164,6 +186,9 @@ function Invitations() {
       `${import.meta.env.VITE_API_URL}/api/invitation/${tripId}/${userId}`,
       {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
     )
       .then(async (response) => {
@@ -218,6 +243,7 @@ function Invitations() {
                 invited={attendees}
                 type="attendees"
                 delete={setdeleteInvitation}
+                isOrganizer={auth?.user.id === trip?.user_id}
               />
               <Guests
                 title="Invités"

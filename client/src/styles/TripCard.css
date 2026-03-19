@@ -1,0 +1,108 @@
+.tripcard-component {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  font-family: var(--body-text);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  background-color: white;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tripcard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.tripcard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.tripcard-title {
+  margin: 0;
+  font-family: var(--title-font);
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: bold;
+  word-break: break-word;
+  text-align: left;
+}
+
+.tripcard-description {
+  margin: 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 400;
+  word-break: break-word;
+  text-align: left;
+  color: #666;
+}
+
+.tripcard-invitation-btn {
+  border-radius: clamp(6px, 1.5vw, 10px);
+  padding: clamp(0.5rem, 1vw, 0.6rem) clamp(1rem, 1.5vw, 1.25rem);
+  color: white;
+  background-color: var(--primary-button);
+  cursor: pointer;
+  font-weight: 500;
+  font-family: var(--body-text);
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  line-height: 1;
+  border: none;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  white-space: nowrap;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tripcard-invitation-btn:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+.tripcard-invitation-btn:active {
+  transform: translateY(0);
+}
+
+.tripcard-location {
+  font-size: 0.95rem;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+}
+
+.tripcard-bottom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: #374151;
+  flex-wrap: wrap;
+}
+
+.tripcard-dates {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: #666;
+}
+
+.tripcard-participants {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

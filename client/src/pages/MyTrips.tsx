@@ -1,20 +1,10 @@
 import { useEffect, useState } from "react";
-import "./styles/MyTrips.css";
-import "./styles/StepCard.css";
+import "../styles/MyTrips.css";
+import "../styles/StepCard.css";
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
-
-interface TheTrip {
-  id: number;
-  title: string;
-  description: string;
-  image_url: string;
-  start_at: string;
-  city: string;
-  country: string;
-  end_at: string;
-}
+import type { TheTrip } from "../types/tripType";
 
 export default function MyTrips() {
   const { auth } = useAuth();
@@ -51,6 +41,7 @@ export default function MyTrips() {
     if (!token) {
       toast.error("Vous devez être connecté pour voir vos voyages");
       navigate("/login");
+      return;
     }
 
     fetch(
@@ -59,15 +50,22 @@ export default function MyTrips() {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
       },
     )
       .then((res) => {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+          navigate("/login");
+          return;
+        }
         if (!res.ok) throw new Error("Erreur lors de la récupération");
         return res.json();
       })
-      .then((data) => setTrips(data))
+      .then((data) => {
+        if (data) setTrips(data);
+      })
       .catch((err) => console.error("Error fetching trips:", err));
   }, [activeTab, auth?.token, navigate]);
 

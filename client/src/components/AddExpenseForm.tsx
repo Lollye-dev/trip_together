@@ -1,4 +1,4 @@
-import "../pages/styles/AddExpenseForm.css";
+import "../styles/AddExpenseForm.css";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -55,7 +55,6 @@ function AddExpenseForm({ tripId, members, onSuccess }: AddExpenseFormProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("Erreur backend:", errorData);
         throw new Error(errorData.message || "Erreur création dépense");
       }
 

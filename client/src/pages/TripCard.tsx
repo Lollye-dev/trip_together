@@ -1,18 +1,9 @@
-import "./styles/TripCard.css";
-
-type TripCardProps = {
-  title?: string;
-  city: string;
-  country: string;
-  startAt: string;
-  endAt: string;
-  participants: number | undefined;
-  role?: "organizer" | "participant";
-  onInvite?: () => void;
-};
+import "../styles/TripCard.css";
+import type { TripCardProps } from "../types/tripType";
 
 function TripCard({
   title,
+  description,
   city,
   country,
   startAt,
@@ -36,26 +27,35 @@ function TripCard({
   return (
     <>
       <article className="tripcard-component">
-        <h2 className="tripcard-title">{title}</h2>
+        <div className="tripcard-top">
+          <div className="tripcard-header">
+            <h2 className="tripcard-title">{title}</h2>
+            <h3 className="tripcard-description">{description}</h3>
+          </div>
 
-        {onInvite && (
-          <button
-            type="button"
-            className="tripcard-invitation-btn"
-            onClick={onInvite}
-          >
-            Inviter
-          </button>
-        )}
+          {role === "organizer" && onInvite && (
+            <button
+              type="button"
+              className="tripcard-invitation-btn"
+              onClick={onInvite}
+            >
+              Inviter
+            </button>
+          )}
+        </div>
 
-        <p className="tripcard-location">
-          {city}, {country}
-        </p>
-        <p className="tripcard-dates">
-          {formatDate(startAt)} - {formatDate(endAt)}
-        </p>
-        <p className="tripcard-participants">{participants} participant(s)</p>
-        <p className="tripcard-role">{role}</p>
+        <div className="tripcard-bottom">
+          <p className="tripcard-location">
+            📍 {city}, {country}
+          </p>
+          <p className="tripcard-dates">
+            📅 {formatDate(startAt)} - {formatDate(endAt)}
+          </p>
+          <p className="tripcard-participants">
+            👥 {participants} participant
+            {participants && participants > 1 ? "s" : ""}
+          </p>
+        </div>
       </article>
     </>
   );

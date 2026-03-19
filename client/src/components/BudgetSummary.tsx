@@ -1,4 +1,4 @@
-import "../pages/styles/BudgetSummary.css";
+import "../styles/BudgetSummary.css";
 
 type BudgetSummaryProps = {
   total: number;

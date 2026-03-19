@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-import "../pages/styles/Modal.css";
+import "../styles/Modal.css";
 
 type ModalProps = {
   isOpen: boolean;

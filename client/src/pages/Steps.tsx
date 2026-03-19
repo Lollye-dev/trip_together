@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
-import AddStep from "../components/AddTrip";
+import AddStep from "../components/AddStep";
 import NavTabs from "../components/NavTabs";
 import StepCard from "../components/StepCard";
 import TripInfos from "../components/TripInfos";
 import { useAuth } from "../contexts/AuthContext";
 import type { Step, StepsResponse, TheTrip } from "../types/tripType";
-import "./styles/Steps.css";
+import "../styles/Steps.css";
 
 type RouteParams = {
   id: string;
@@ -38,7 +38,6 @@ function Steps() {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
           },
         },
@@ -81,7 +80,6 @@ function Steps() {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
           },
         },
@@ -133,9 +131,15 @@ function Steps() {
       return;
     }
 
+    if (!token) {
+      toast.error("Vous devez être connecté");
+      navigate("/login");
+      return;
+    }
+
     fetchTrip();
     fetchSteps();
-  }, [id, tripId, fetchTrip, fetchSteps, navigate]);
+  }, [id, tripId, token, fetchTrip, fetchSteps, navigate]);
 
   const pendingSteps = steps.filter((s) => s.status === "pending");
   const validatedSteps = steps.filter((s) => s.status === "validated");
@@ -161,7 +165,7 @@ function Steps() {
                     )
                   </h2>
                   <p className="section-subtitle">
-                    Votez pour les destinations ci-dessous. <br />
+                    Votez pour les étapes ci-dessous. <br />
                     Pour valider une étape, tous les membres doivent avoir voté,
                     avec une majorité de OUI.
                   </p>
@@ -173,6 +177,7 @@ function Steps() {
                         currentUserId={currentUserId}
                         tripId={tripId}
                         memberCount={memberCount}
+                        isOwner={trip?.user_id === currentUserId}
                         onVoteSuccess={fetchSteps}
                       />
                     ))}
@@ -196,6 +201,7 @@ function Steps() {
                         currentUserId={currentUserId}
                         tripId={tripId}
                         memberCount={memberCount}
+                        isOwner={trip?.user_id === currentUserId}
                         onVoteSuccess={fetchSteps}
                       />
                     ))}
@@ -219,6 +225,7 @@ function Steps() {
                         currentUserId={currentUserId}
                         tripId={tripId}
                         memberCount={memberCount}
+                        isOwner={trip?.user_id === currentUserId}
                         onVoteSuccess={fetchSteps}
                       />
                     ))}

@@ -54,10 +54,23 @@ const browseMyTrip: RequestHandler = async (req, res, next) => {
   }
 };
 
-const delate: RequestHandler = async (req, res, next) => {
+const deleteTrip: RequestHandler = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    const affectedRows = await tripRepository.delete(id);
+    const authReq = req as unknown as RequestWithAuth;
+    const tripId = Number(req.params.id);
+    const userId = Number(authReq.auth.sub);
+
+    const isOwner = await tripRepository.isOwner(tripId, userId);
+    if (!isOwner) {
+      res
+        .status(403)
+        .json({ error: "Seul le créateur du voyage peut le supprimer" });
+      return;
+    }
+
+    await invitationRepository.deleteByTrip(tripId);
+
+    const affectedRows = await tripRepository.delete(tripId);
 
     if (affectedRows === 0) {
       res.status(404).send("Voyage non trouvé");
@@ -154,7 +167,7 @@ const add: RequestHandler = async (req, res, next) => {
   }
 };
 
-const getMembersByTrip: RequestHandler = async (req, res, next) => {
+const browseMembers: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.id);
 
@@ -176,8 +189,8 @@ export default {
   browseTheTrip,
   browseMyTrip,
   read,
-  delate,
+  deleteTrip,
   add,
   count,
-  getMembersByTrip,
+  browseMembers,
 };

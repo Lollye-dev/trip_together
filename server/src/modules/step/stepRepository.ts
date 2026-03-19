@@ -68,24 +68,19 @@ class stepRepository {
     return rows.length > 0 ? (rows[0] as VoteWithUser) : null;
   }
 
-  async selectByStep(stepId: number): Promise<VoteWithUser[]> {
+  async selectVotesByStep(stepId: number): Promise<VoteWithUser[]> {
     const [rows] = await databaseClient.query<Rows>(
       `SELECT
-        v.id,
-        v.created_at,
-        v.user_id,
-        v.step_id,
-        v.vote,
-        v.comment,
-        u.firstname AS user_name
-      FROM vote v
-      JOIN user u ON u.id = v.user_id
+        v.*, u.firstname AS user_name
+      FROM vote AS v
+      JOIN user AS u ON u.id = v.user_id
       WHERE v.step_id = ?
       ORDER BY v.created_at DESC`,
       [stepId],
     );
     return rows as VoteWithUser[];
   }
+
   async delete(stepId: number): Promise<number> {
     const [result] = await databaseClient.query<Result>(
       "DELETE FROM step WHERE id = ?",
@@ -94,7 +89,7 @@ class stepRepository {
     return result.affectedRows;
   }
 
-  async getStepsWithVotes(tripId: number): Promise<Rows> {
+  async getStepWithVotes(tripId: number): Promise<Rows> {
     const [rows] = await databaseClient.query<Rows>(
       `
       SELECT 
@@ -113,25 +108,22 @@ class stepRepository {
             WHERE trip_id = s.trip_id AND status = 'accepted'
             UNION
             SELECT t.user_id 
-            FROM trip t 
+            FROM trip AS t 
             WHERE t.id = s.trip_id
           ) AS members
         ) AS total_members,
-
         (
           SELECT COUNT(*) 
-          FROM vote v 
+          FROM vote AS v 
           WHERE v.step_id = s.id
         ) AS total_votes,
-
         (
           SELECT COUNT(*) 
-          FROM vote v 
+          FROM vote AS v 
           WHERE v.step_id = s.id AND v.vote = 1
         ) AS yes_votes
-
-      FROM step s
-      JOIN user u ON u.id = s.user_id
+      FROM step AS s
+      JOIN user AS u ON u.id = s.user_id
       WHERE s.trip_id = ?
       ORDER BY s.id ASC`,
       [tripId],

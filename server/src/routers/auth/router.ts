@@ -1,5 +1,6 @@
 import express from "express";
-import { hashPassword, login } from "../../modules/auth/authActions";
+import { login } from "../../modules/auth/authActions";
+import { hashPassword } from "../../modules/auth/authService";
 import userActions from "../../modules/user/userActions";
 
 const router = express.Router();

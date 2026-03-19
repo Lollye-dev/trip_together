@@ -1,50 +1,42 @@
 import TripCard from "../pages/TripCard";
 import TripInvitation from "../pages/TripInvitation";
-import type { TheTrip } from "../types/tripType";
+import type { TripInfosProps } from "../types/tripType";
 import Modal from "./Modal";
-import "../pages/styles/TripInfos.css";
+import "../styles/TripInfos.css";
 import { useState } from "react";
-
-type TripInfosProps = {
-  trip: TheTrip | null;
-};
+import { useAuth } from "../contexts/AuthContext";
 
 function TripInfos({ trip }: TripInfosProps) {
   if (!trip) return null;
+
   const tripId = trip.id;
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const openInviteModal = () => {
-    setIsInviteModalOpen(true);
-  };
+  const openInviteModal = () => setIsInviteModalOpen(true);
+  const closeInviteModal = () => setIsInviteModalOpen(false);
 
-  const closeInviteModal = () => {
-    setIsInviteModalOpen(false);
-  };
+  const { auth } = useAuth();
+  const isOrganizer = auth?.user.id === trip.user_id;
+
   return (
     <>
       <header
         className="trip-header"
         style={{
-          backgroundImage: `url("/images/martinique.webp")`,
-        }}
-      />
-      {/* <header
-        className="trip-header"
-        style={{
           backgroundImage: `url(${trip.image_url || "/images/default-city.jpg"})`,
         }}
-      /> */}
+      />
       <section className="trip-trip-infos">
         <article className="trip-tripinfocard">
           {trip && (
             <TripCard
               title={trip.title}
+              description={trip.description}
               city={trip.city}
               country={trip.country}
               startAt={trip.start_at}
               endAt={trip.end_at}
               participants={trip.participants}
-              role={trip.role}
+              role={isOrganizer ? "organizer" : "participant"}
               onInvite={openInviteModal}
             />
           )}

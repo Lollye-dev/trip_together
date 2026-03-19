@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import type { StepCardProps } from "../types/tripType";
 import type { CreateVotePayload, Vote, VotesStats } from "../types/voteType";
-import "../pages/styles/StepCard.css";
+import "../styles/StepCard.css";
 import { toast } from "react-toastify";
 
 function StepCard({
@@ -10,6 +10,7 @@ function StepCard({
   currentUserId,
   tripId,
   memberCount,
+  isOwner,
   onVoteSuccess,
 }: StepCardProps) {
   const [allVotes, setAllVotes] = useState<Vote[]>([]);
@@ -43,7 +44,6 @@ function StepCard({
       {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       },
@@ -141,7 +141,7 @@ function StepCard({
       );
 
       if (response.ok) {
-        if (onVoteSuccess) onVoteSuccess(); // Rafraîchit la liste
+        if (onVoteSuccess) onVoteSuccess();
         toast.success("Étape supprimée");
       }
     } catch {
@@ -164,7 +164,7 @@ function StepCard({
         }}
       />{" "}
       <article className="step-header">
-        {!step.is_initial && (
+        {!step.is_initial && isOwner && (
           <button
             type="button"
             onClick={handleDeleteStep}
@@ -193,7 +193,7 @@ function StepCard({
       </article>
       {step.is_initial ? (
         <div className="step-initial">
-          <p className="step-initial-msg">Destination initiale</p>
+          <p className="step-initial-msg">Étape initiale</p>
         </div>
       ) : (
         <article className="step-body">
@@ -269,7 +269,10 @@ function StepCard({
                   {alreadyVoted ? (
                     "Envoi..."
                   ) : (
-                    <span className="vote-yes-btn">{thumbsUpLogo} OUI</span>
+                    <span className="vote-yes-btn">
+                      <span className="vote-yes-icon" />
+                      OUI
+                    </span>
                   )}
                 </button>
                 <button
@@ -281,7 +284,10 @@ function StepCard({
                   {alreadyVoted ? (
                     "Envoi..."
                   ) : (
-                    <span className="vote-no-btn">{thumbsDownLogo} NON</span>
+                    <span className="vote-no-btn">
+                      <span className="vote-no-icon" />
+                      NON
+                    </span>
                   )}
                 </button>
               </div>

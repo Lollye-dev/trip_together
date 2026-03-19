@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import "./styles/Home.css";
+import "../styles/Home.css";
 import { useEffect, useState } from "react";
 
 function Home() {
@@ -31,8 +31,8 @@ function Home() {
           simplement
         </h2>
         <p className="hero-description">
-          Créez un voyage, invitez vos amis, votez pour vos destinations
-          préférées et partagez les dépenses. Tout ça au même endroit.
+          Créez un voyage, invitez vos amis, votez pour vos étapes préférées et
+          partagez les dépenses. Tout ça au même endroit.
         </p>
         <div className="hero-cta">
           <Link to="/create-trip" className="btn-cta btn-primairy">
@@ -125,10 +125,10 @@ function Home() {
                 className="feature-icon-img"
                 width="40"
                 height="40"
-                aria-label="Voter pour les destinations"
+                aria-label="Voter pour les étapes"
               />
             </div>
-            <h3 className="feature-card-title">Voter pour les destinations</h3>
+            <h3 className="feature-card-title">Voter pour les étapes</h3>
             <p className="feature-card-description">
               Proposez des lieux et votez pour décider ensemble où aller.
             </p>

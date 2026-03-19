@@ -3,6 +3,12 @@ import tripRepository from "../trip/tripRepository";
 import userRepository from "../user/userRepository";
 import invitationRepository from "./invitationRepository";
 
+type RequestWithAuth = import("express").Request & {
+  auth: {
+    sub: string;
+  };
+};
+
 const read: RequestHandler = async (req, res, next) => {
   try {
     const invitationId = Number(req.params.id);
@@ -74,16 +80,13 @@ const edit: RequestHandler = async (req, res, next) => {
 const add: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.id);
-    const { email, message } = req.body;
-    const existingUser = await userRepository.findByEmail(email);
-
-    const user_id = existingUser ? existingUser.id : null;
 
     if (Number.isNaN(tripId)) {
       res.status(400).json({ error: "ID du voyage invalide" });
       return;
     }
 
+    const { email, message } = req.body;
     if (!email || !message) {
       res.status(400).json({ error: "Email et message requis" });
       return;
@@ -95,14 +98,33 @@ const add: RequestHandler = async (req, res, next) => {
       return;
     }
 
+    const existingUser = await userRepository.findByEmail(email);
+    if (!existingUser) {
+      res
+        .status(404)
+        .json({ error: "Aucun compte utilisateur trouvé avec cet email" });
+      return;
+    }
+
+    const existingInvitation = await invitationRepository.findByEmailAndTrip(
+      email,
+      tripId,
+    );
+    if (existingInvitation) {
+      res
+        .status(409)
+        .json({ error: "Cet utilisateur a déjà été invité à ce voyage" });
+      return;
+    }
+
     const invitationId = await invitationRepository.create(
       tripId,
       email,
       message,
-      user_id,
+      existingUser.id,
     );
 
-    const invitationLink = `http://localhost:3000/trip/${tripId}/invitation/${invitationId}`;
+    const invitationLink = `${process.env.CLIENT_URL}/trip/${tripId}/invitation/${invitationId}`;
 
     res.status(201).json({ invitationLink });
   } catch (err) {
@@ -110,7 +132,7 @@ const add: RequestHandler = async (req, res, next) => {
   }
 };
 
-const selectInvitationsByTrip: RequestHandler = async (req, res, next) => {
+const browseInvitations: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.id);
 
@@ -147,13 +169,23 @@ const selectInvitationsByTrip: RequestHandler = async (req, res, next) => {
   }
 };
 
-const delate: RequestHandler = async (req, res, next) => {
+const deleteInvitation: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.tripId);
     const userId = Number(req.params.userId);
+    const authReq = req as unknown as RequestWithAuth;
+    const currentUserId = Number(authReq.auth.sub);
 
     if (Number.isNaN(tripId) || Number.isNaN(userId)) {
       res.status(400).json({ message: "Paramètres invalides" });
+      return;
+    }
+
+    const isOwner = await tripRepository.isOwner(tripId, currentUserId);
+    if (!isOwner) {
+      res.status(403).json({
+        error: "Seul le créateur du voyage peut retirer un membre",
+      });
       return;
     }
 
@@ -170,4 +202,4 @@ const delate: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { edit, read, add, selectInvitationsByTrip, delate };
+export default { edit, read, add, browseInvitations, deleteInvitation };

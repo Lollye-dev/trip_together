@@ -1,0 +1,119 @@
+/* Mobile-specific styles for screens 767px and below */
+@media (max-width: 767px) {
+  /* Hide back arrow on mobile */
+  .button-back-arrow,
+  .back-arrow {
+    display: none;
+  }
+
+  /* CreateTrip form mobile optimizations */
+  .create-trip-page > img {
+    width: clamp(3rem, 8vw, 4rem);
+    margin-top: clamp(1rem, 2vw, 2rem);
+  }
+
+  .create-trip-page h1 {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .create-trip-page h1,
+  .create-trip-page h1 span {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    text-align: center;
+  }
+
+  .create-trip-page > p {
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    text-align: center;
+    margin-top: clamp(0.3rem, 1vw, 0.5rem);
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    max-width: 90%;
+    padding: 0 1rem;
+  }
+
+  .create-trip-form {
+    width: min(400px, 85vw);
+    max-width: 400px;
+    height: auto;
+    min-height: auto;
+    padding: clamp(1rem, 2vw, 1.5rem) clamp(0.75rem, 1.5vw, 1rem)
+      clamp(1.5rem, 3vw, 2rem);
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    width: 100%;
+  }
+
+  .form-group label {
+    margin-left: 0;
+    margin-bottom: clamp(0.35rem, 1vw, 0.5rem);
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    font-weight: 500;
+  }
+
+  .form-group input {
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    width: 100%;
+    min-height: 40px;
+    margin-top: 0;
+    padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.75rem, 1.5vw, 1rem);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .date-container {
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    width: 100%;
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .date-container .form-group {
+    margin-top: 0;
+  }
+
+  .date-container .form-group input {
+    width: 100%;
+  }
+
+  .astuces-container {
+    width: 90%;
+    height: auto;
+    min-height: clamp(4rem, 10vh, 5rem);
+    font-size: clamp(0.8rem, 1.8vw, 0.85rem);
+    padding: clamp(0.75rem, 1.5vw, 1rem);
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    text-align: left;
+  }
+
+  .button-container {
+    flex-direction: column-reverse;
+    align-items: center;
+    align-self: center;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    margin-right: 0;
+    gap: clamp(0.75rem, 1.5vw, 1rem);
+    width: 100%;
+  }
+
+  .create-trip-button {
+    width: min(280px, 100%);
+    max-width: 280px;
+    min-height: clamp(44px, 10vw, 50px);
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    padding: clamp(0.5rem, 1vw, 0.8rem) clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .cancel-button {
+    width: auto;
+    min-height: 40px;
+    padding: clamp(0.5rem, 1vw, 0.75rem) clamp(1.25rem, 2vw, 2rem);
+    font-size: clamp(0.9rem, 1.8vw, 1rem);
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+}

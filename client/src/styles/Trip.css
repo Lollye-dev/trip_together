@@ -1,0 +1,25 @@
+.trip-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+
+.trip-trip-infos {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(-2rem, -8vw, -5rem);
+  z-index: 50;
+  position: relative;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+
+.trip-navbar {
+  height: auto;
+  min-height: 50px;
+}

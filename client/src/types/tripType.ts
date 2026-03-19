@@ -19,8 +19,9 @@ export type StepCardProps = {
   currentUserId: number;
   tripId: number;
   memberCount?: number;
-  isMainDestination?: boolean;
+  isMainStep?: boolean;
   trip?: TheTrip | null;
+  isOwner?: boolean;
   onVoteSuccess?: () => void;
 };
 
@@ -48,4 +49,20 @@ export type TheTrip = {
   user_id?: number;
   participants?: number;
   role?: "organizer" | "participant";
+};
+
+export type TripInfosProps = {
+  trip: TheTrip | null;
+};
+
+export type TripCardProps = {
+  title?: string;
+  description?: string;
+  city: string;
+  country: string;
+  startAt: string;
+  endAt: string;
+  participants: number | undefined;
+  role?: "organizer" | "participant";
+  onInvite?: () => void;
 };

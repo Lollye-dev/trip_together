@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import AddExpenseForm from "../components/AddExpenseForm";
 import BudgetSummary from "../components/BudgetSummary";
 import Modal from "../components/Modal";
 import NavTabs from "../components/NavTabs";
 import TripInfos from "../components/TripInfos";
-import "../pages/styles/TripBugdetPage.css";
+import "../styles/TripBugdetPage.css";
 import { useAuth } from "../contexts/AuthContext";
 import type { TheTrip } from "../types/tripType";
 
@@ -51,6 +51,7 @@ function TripBudgetPage() {
   });
 
   const { auth } = useAuth();
+  const navigate = useNavigate();
   const currentUserId = auth?.user?.id;
 
   const [trip, setTrip] = useState<TheTrip | null>(null);
@@ -91,7 +92,6 @@ function TripBudgetPage() {
       }
 
       const data = await response.json();
-      console.log("MEMBERS DATA:", data);
       setMembers(data);
     } catch (error) {
       toast.error("Erreur chargement participants");
@@ -127,6 +127,13 @@ function TripBudgetPage() {
       },
     );
 
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+      navigate("/login");
+      return;
+    }
+
     if (!response.ok) {
       console.error("Erreur summary");
       return;
@@ -134,7 +141,7 @@ function TripBudgetPage() {
 
     const data = await response.json();
     setSummary(data);
-  }, [tripId, auth]);
+  }, [tripId, auth, navigate]);
 
   useEffect(() => {
     if (!tripId) return;
@@ -169,6 +176,13 @@ function TripBudgetPage() {
           },
         },
       );
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+        navigate("/login");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Erreur suppression");

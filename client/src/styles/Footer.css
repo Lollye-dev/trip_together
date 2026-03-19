@@ -1,0 +1,72 @@
+.footer-container {
+  background-color: var(--background);
+  padding: 0 clamp(1.25rem, 5vw, 2.5rem);
+  width: 100%;
+}
+
+.footer-divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  min-height: clamp(75px, 15vh, 100px);
+  padding: clamp(0.75rem, 2vw, 1.25rem) 0;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.footer-logo {
+  height: clamp(20px, 4vw, 24px);
+  width: auto;
+  margin-right: clamp(0.5rem, 1vw, 0.5rem);
+}
+
+.footer-right {
+  font-size: clamp(0.85rem, 2vw, 0.875rem);
+  color: #666;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  flex-wrap: wrap;
+  cursor: default;
+  justify-content: flex-end;
+}
+
+/* Mobile: Stacked layout */
+@media (max-width: 767px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .footer-left {
+    justify-content: center;
+  }
+
+  .footer-right {
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Tablet: Adjusted spacing */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .footer-content {
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+}

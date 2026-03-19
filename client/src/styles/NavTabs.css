@@ -1,0 +1,95 @@
+#tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(0.75rem, 1.5vw, 0.75rem);
+  padding: clamp(0.5rem, 1.5vw, 0.5rem) clamp(1rem, 2vw, 1rem);
+  background-color: var(--white);
+  border-bottom: 1px solid #e2e8f0;
+  margin-top: clamp(60px, 12vh, 100px);
+  border-radius: clamp(8px, 2vw, 12px);
+  max-width: 1400px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.4rem, 1vw, 0.5rem);
+  padding: clamp(0.6rem, 1.5vw, 0.625rem) clamp(1rem, 2vw, 1.125rem);
+  min-width: clamp(44px, 20vw, 110px);
+  min-height: 44px;
+  font-size: clamp(0.85rem, 1.8vw, 0.9rem);
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: var(--clamp-radius-sm);
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tab:hover {
+  color: var(--button-hover);
+  border-color: var(--button-hover);
+  background-color: var(--white);
+}
+
+.tab.active {
+  color: var(--white);
+  border-color: var(--primary-button);
+  background-color: var(--primary-button);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+}
+
+.tab svg,
+.tab-icon {
+  width: clamp(16px, 3vw, 18px);
+  height: clamp(16px, 3vw, 18px);
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+.tab-label {
+  white-space: nowrap;
+}
+
+.tab.inactive {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile: Icon-only tabs */
+@media (max-width: 640px) {
+  #tabs {
+    justify-content: flex-start;
+    padding: clamp(0.5rem, 1.5vw, 0.5rem) clamp(0.75rem, 1.5vw, 1rem);
+    border-radius: clamp(8px, 2vw, 12px);
+    gap: clamp(0.5rem, 1vw, 0.75rem);
+  }
+
+  .tab {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    padding: 0.5rem;
+    border-radius: clamp(6px, 1.5vw, 10px);
+    gap: 0;
+  }
+
+  .tab-label {
+    display: none;
+  }
+}
+
+/* Tablet: Partial labels */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .tab {
+    min-width: auto;
+    padding: clamp(0.5rem, 1vw, 0.6rem) clamp(0.8rem, 1.5vw, 1rem);
+  }
+}
