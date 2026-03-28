@@ -96,7 +96,7 @@ ORDER BY e.id DESC
     amount: number,
     paid_by: number,
     category_id: number,
-    date: string = new Date().toISOString().split('T')[0],
+    date: string = new Date().toISOString().split("T")[0],
   ) {
     const [result] = await databaseClient.query<Result>(
       "INSERT INTO expense (trip_id, title, amount, paid_by, category_id, date) VALUES (?, ?, ?, ?, ?, ?)",

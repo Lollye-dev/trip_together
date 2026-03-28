@@ -67,4 +67,3 @@ export type TripCardProps = {
   role?: "organizer" | "participant";
   onInvite?: () => void;
 };
-

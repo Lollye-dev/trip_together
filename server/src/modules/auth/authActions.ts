@@ -1,6 +1,10 @@
-import type { RequestHandler } from "express";
+import type { Request, RequestHandler } from "express";
 import userRepository from "../user/userRepository";
 import { generateToken, verifyPassword } from "./authService";
+
+type RequestWithAuth = Request & {
+  userId: number;
+};
 
 export const login: RequestHandler = async (req, res, next) => {
   try {
@@ -28,7 +32,8 @@ export const login: RequestHandler = async (req, res, next) => {
 
 export const verify: RequestHandler = async (req, res, next) => {
   try {
-    const userId = (req as any).userId;
+    const authReq = req as unknown as RequestWithAuth;
+    const userId = authReq.userId;
     const user = await userRepository.read(userId);
     if (!user) {
       res.sendStatus(401);

@@ -52,9 +52,8 @@ const add: RequestHandler = async (req, res, next) => {
 
     await budgetRepository.ensureDefaultCategories();
 
-    const categoryExists = await budgetRepository.categoryExists(
-      numericCategoryId,
-    );
+    const categoryExists =
+      await budgetRepository.categoryExists(numericCategoryId);
 
     if (!categoryExists) {
       res.status(400).json({
@@ -63,7 +62,6 @@ const add: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // 1- Crée la dépense
     const expenseId = await budgetRepository.create(
       tripId,
       title,
@@ -73,7 +71,6 @@ const add: RequestHandler = async (req, res, next) => {
       date,
     );
 
-    // 2- Récupère les membres du voyage
     const members = await tripRepository.findMembersByTrip(tripId);
     const participantIds = (members as { id: number }[]).map((m) => m.id);
 
@@ -82,7 +79,6 @@ const add: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // 3- Crée les shares égaux
     await expenseShareService.createEqualShares(
       expenseId,
       numericAmount,

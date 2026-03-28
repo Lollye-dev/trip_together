@@ -5,18 +5,14 @@ import { toast } from "react-toastify";
 import { GOOGLE_MAPS_LIBRARIES } from "../constants/maps";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/AddStep.css";
-
-interface AddStepProps {
-  onStepAdded: () => void;
-}
+import type { AddStepProps } from "../types/stepAdd";
 
 export default function AddStep({ onStepAdded }: AddStepProps) {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const inputRef = useRef<HTMLDivElement>(null);
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const placeAutocompleteRef = useRef<any>(null);
+  const placeAutocompleteRef = useRef<HTMLElement | null>(null);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_API_KEY || "",
@@ -27,55 +23,60 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
     if (!isLoaded || !inputRef.current) return;
 
     if (placeAutocompleteRef.current) {
-      inputRef.current.appendChild(placeAutocompleteRef.current);
       return;
     }
 
     const initAutocomplete = async () => {
       try {
-        // Importation dynamique de la librairie "places"
         // @ts-ignore
-        const { PlaceAutocompleteElement } = (await google.maps.importLibrary(
-          "places",
-        )) as google.maps.PlacesLibrary;
-
+        const { PlaceAutocompleteElement } =
+          await google.maps.importLibrary("places");
         // @ts-ignore
         const autocomplete = new PlaceAutocompleteElement();
         placeAutocompleteRef.current = autocomplete;
 
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        inputRef.current!.innerHTML = "";
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        inputRef.current!.appendChild(autocomplete);
+        if (inputRef.current) {
+          inputRef.current.innerHTML = "";
+          inputRef.current.appendChild(autocomplete);
+        }
 
-        autocomplete.addEventListener("gmp-places-select", async (e: Event) => {
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          const place = (e as any).place;
+        autocomplete.addEventListener("gmp-places-select", (event: Event) => {
+          const customEvent = event as unknown as {
+            place: {
+              name: string;
+              address_components: Array<{ types: string[]; long_name: string }>;
+              photos?: Array<{
+                getUrl: (opts: { maxWidth: number }) => string;
+              }>;
+              fetchFields: (opts: { fields: string[] }) => Promise<void>;
+            };
+          };
+          const place = customEvent.place;
           if (!place) return;
 
-          await place.fetchFields({
-            fields: ["address_components", "name", "photos"],
-          });
+          place
+            .fetchFields({ fields: ["address_components", "name", "photos"] })
+            .then(() => {
+              const cityName = place.name || "";
+              const countryComp = place.address_components?.find(
+                (comp: { types: string[]; long_name: string }) =>
+                  comp.types.includes("country"),
+              );
+              const countryName = countryComp?.long_name || "";
+              const photoUrl =
+                (
+                  place.photos?.[0] as
+                    | { getUrl: (opts: { maxWidth: number }) => string }
+                    | undefined
+                )?.getUrl({ maxWidth: 400 }) || "";
 
-          const cityName = place.name || "";
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          const countryComp = place.address_components?.find((comp: any) =>
-            comp.types.includes("country"),
-          );
-          const countryName = countryComp?.long_name;
-          const photoUrl = place.photos?.[0]?.getUrl({ maxWidth: 400 }) || "";
-
-          setCity(cityName);
-          if (countryName) setCountry(countryName);
-          setImageUrl(photoUrl);
-        });
-
-        autocomplete.addEventListener("change", () => {
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          setCity((autocomplete as any).value);
+              setCity(cityName);
+              setCountry(countryName);
+              setImageUrl(photoUrl);
+            });
         });
       } catch (error) {
-        console.error("Error loading Google Maps Places library:", error);
+        console.error("Error loading Google Maps Places:", error);
       }
     };
 
@@ -88,30 +89,12 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
 
   const handleAddStep = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("token") || auth?.token;
-    if (!token) return;
+    if (!auth?.token) return;
 
     const user_id = auth?.user?.id;
-    if (!user_id) {
-      console.error("User ID missing from auth context");
-      return;
-    }
+    if (!user_id) return;
 
-    let currentCity = city;
-    if (!currentCity && placeAutocompleteRef.current) {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      currentCity = (placeAutocompleteRef.current as any).value;
-    }
-
-    let currentCountry = country;
-    if (!currentCountry && currentCity && currentCity.includes(",")) {
-      const parts = currentCity.split(",").map((p) => p.trim());
-
-      currentCity = parts[0];
-      currentCountry = parts[parts.length - 1];
-    }
-
-    if (!currentCity || !currentCountry) {
+    if (!city || !country) {
       toast.error("Veuillez indiquer un lieu valide");
       return;
     }
@@ -123,28 +106,17 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${auth?.token}`,
           },
-          body: JSON.stringify({
-            city: currentCity,
-            country: currentCountry, // Utiliser currentCountry au lieu de country
-            user_id,
-            image_url: imageUrl,
-          }),
+          body: JSON.stringify({ city, country, user_id, image_url: imageUrl }),
         },
       );
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de l'ajout de l'étape");
-      }
+      if (!response.ok) throw new Error("Erreur lors de l'ajout de l'étape");
 
       setCity("");
       setCountry("");
       setImageUrl("");
-
-      if (placeAutocompleteRef.current) {
-        placeAutocompleteRef.current.value = "";
-      }
 
       onStepAdded();
     } catch (error) {
@@ -155,18 +127,17 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
   return (
     <div className="add-step-form-container">
       <form className="add-step-form" onSubmit={handleAddStep}>
+        <label htmlFor="city">Lieu</label>
         <div className="add-step-form-group">
-          <label htmlFor="city">Lieu</label>
           <div
-            className="input-container"
             ref={inputRef}
+            className="input-container"
             style={{ width: "100%" }}
           />
+          <button type="submit" className="add-btn">
+            Ajouter cette étape
+          </button>
         </div>
-
-        <button type="submit" className="add-btn">
-          Ajouter cette étape
-        </button>
       </form>
     </div>
   );
