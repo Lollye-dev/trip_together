@@ -15,28 +15,37 @@ function Invitation() {
   const [invitation, setInvitation] = useState<invitationType | null>(null);
   const [mytrip, setmyTrip] = useState<TheTrip | null>(null);
   const navigate = useNavigate();
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
 
   useEffect(() => {
     if (!invitationId) {
-      toast.error("Invitation invalide");
-      navigate("/");
+      navigate("/", {
+        state: {
+          toast: {
+            type: "error",
+            message: "Invitation invalide",
+          },
+        },
+      });
       return;
     }
 
-    const token = localStorage.getItem("token") || auth?.token;
-
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${auth?.token}`,
       },
     })
 
       .then(async (response) => {
         if (response.status === 401) {
-          localStorage.removeItem("token");
-          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-          navigate("/login");
+          navigate("/login", {
+            state: {
+              toast: {
+                type: "error",
+                message: "Votre session a expiré. Veuillez vous reconnecter.",
+              },
+            },
+          });
           return;
         }
         if (!response.ok) {
@@ -55,59 +64,105 @@ function Invitation() {
         const invitation = await response.json();
 
         if (response.status === 400) {
-          toast.error(invitation.message);
-          navigate("/");
+          navigate("/", {
+            state: {
+              toast: {
+                type: "error",
+                message: invitation.message,
+              },
+            },
+          });
+          return;
         }
 
         if (response.status === 403) {
-          toast.error(invitation.message);
-          navigate("/");
+          navigate("/", {
+            state: {
+              toast: {
+                type: "error",
+                message: invitation.message,
+              },
+            },
+          });
+          return;
         }
 
         if (response.status === 404) {
-          toast.error(invitation.message);
-          navigate("/");
+          navigate("/", {
+            state: {
+              toast: {
+                type: "error",
+                message: invitation.message,
+              },
+            },
+          });
+          return;
         }
 
         if (response.status === 409) {
-          toast.error(invitation.message);
-          navigate("/");
+          navigate("/", {
+            state: {
+              toast: {
+                type: "error",
+                message: invitation.message,
+              },
+            },
+          });
+          return;
         }
 
         if (response.status === 410) {
-          toast.error(invitation.message);
-          navigate("/");
+          navigate("/", {
+            state: {
+              toast: {
+                type: "error",
+                message: invitation.message,
+              },
+            },
+          });
+          return;
         }
 
         setInvitation(invitation);
       })
       .catch(() => {
-        toast.error("Invitation introuvable ou accès non autorisé");
-        navigate("/");
+        navigate("/", {
+          state: {
+            toast: {
+              type: "error",
+              message: "Invitation introuvable ou accès non autorisé",
+            },
+          },
+        });
       });
-  }, [navigate, invitationId, id, auth?.token]);
+  }, [invitationId, id, auth?.token, navigate]);
 
   async function invitationResponded(status: "accepted" | "refused") {
     if (!invitationId) return;
 
     try {
-      const token = localStorage.getItem("token") || auth?.token;
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/invitation/${invitationId}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${auth?.token}`,
           },
           body: JSON.stringify({ status }),
         },
       );
 
       if (response.status === 401) {
-        localStorage.removeItem("token");
-        toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-        navigate("/login");
+        logout();
+        navigate("/login", {
+          state: {
+            toast: {
+              type: "error",
+              message: "Votre session a expiré. Veuillez vous reconnecter.",
+            },
+          },
+        });
         return;
       }
 
@@ -119,8 +174,14 @@ function Invitation() {
         toast.success("Invitation acceptée");
         navigate(`/trip/${id ?? invitation?.trip_id}`);
       } else {
-        toast.error("Invitation refusée");
-        navigate("/");
+        navigate("/", {
+          state: {
+            toast: {
+              type: "error",
+              message: "Invitation refusée",
+            },
+          },
+        });
       }
     } catch (err) {
       toast.error("Erreur lors du traitement de l'invitation");
@@ -130,7 +191,7 @@ function Invitation() {
   return (
     <>
       <TripInfos trip={mytrip} />
-      <main className="invitation-main">
+      <div className="invitation-main">
         <article id="invitation" className="invitation-card">
           <p className="invitation-text">{`${auth?.user.firstname ?? ""}, vous avez été invité au voyage de`}</p>
           <img
@@ -162,7 +223,7 @@ function Invitation() {
             </button>
           </div>
         </article>
-      </main>
+      </div>
     </>
   );
 }

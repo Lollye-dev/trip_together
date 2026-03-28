@@ -25,3 +25,19 @@ export const login: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const verify: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as any).userId;
+    const user = await userRepository.read(userId);
+    if (!user) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const { password, ...userWithoutHashedPassword } = user;
+    res.json({ user: userWithoutHashedPassword });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -4,3 +4,9 @@ export type StepAdd = {
   country: string;
   image_url: string;
 };
+
+export type AddStepProps = {
+  onStepAdded: () => void;
+};
+
+export type Libraries = ("drawing" | "geometry" | "places" | "visualization")[];

@@ -1,9 +1,17 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import "../styles/Home.css";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 function Home() {
   const [countTrip, setCountTrip] = useState<number | null>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.toast?.type === "error") {
+      toast.error(location.state.toast.message);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/count`).then(

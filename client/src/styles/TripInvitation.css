@@ -32,6 +32,7 @@
 .tripinvitation-head p {
   font-size: 1.4rem;
   font-weight: 700;
+  font-family: var(--title-font);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,12 +41,12 @@
 }
 
 .tripinvitation-head span {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #6b7280;
 }
 
 .tripinvitation-bg-image {
-  background-image: url(../../../header-background-city.png);
+  background-image: url("/header-background-city.png");
   background-size: cover;
   background-position: center;
   height: 220px;
@@ -68,10 +69,19 @@
 .tripinvitation-trip-infos h2 {
   margin: 0;
   font-size: 1.4rem;
+  font-family: var(--title-font);
+  font-weight: 500;
+}
+
+.tripinvitation-description {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+  line-height: 1.5;
 }
 
 .tripinvitation-location {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #4b5563;
 }
 
@@ -103,7 +113,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 0.75rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
   background: #f9fafb;
   transition: border 0.2s ease;
 }
@@ -119,20 +129,20 @@
 .tripinvitation-btn-cancel-invitation {
   height: 48px;
   border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s ease;
 }
 
 .tripinvitation-btn-send-invitation {
-  background-color: #166534;
+  background-color: var(--primary-button);
   color: white;
   border: none;
 }
 
 .tripinvitation-btn-send-invitation:hover {
-  background-color: #14532d;
+  background-color: var(--button-hover);
 }
 
 .tripinvitation-btn-cancel-invitation {

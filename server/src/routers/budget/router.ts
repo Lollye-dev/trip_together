@@ -12,6 +12,8 @@ router.use(verifyToken);
 router.get("/:id/summary", budgetActions.getSummary);
 router.post("/:id/shares", expenseShareActions.create);
 
+router.get("/categories", budgetActions.getCategories);
+
 router.get("/:id", budgetActions.getExpensesByTrip);
 router.post("/:id", budgetActions.add);
 

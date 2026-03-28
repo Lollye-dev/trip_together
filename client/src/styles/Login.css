@@ -7,7 +7,7 @@
   align-items: center;
   box-sizing: border-box;
   font-family: var(--body-text);
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: 1.5rem;
 
   /* Background properties */
   background-image: url("/background.jpg");
@@ -20,8 +20,8 @@
 .auth-card {
   background: rgba(255, 255, 255, 0.4); /* Glassmorphism base */
   backdrop-filter: blur(10px); /* Blur effect */
-  border-radius: clamp(12px, 3vw, 20px);
-  padding: clamp(2rem, 5vw, 3.75rem) clamp(1.5rem, 4vw, 3.75rem);
+  border-radius: 16px;
+  padding: 3.375rem 2.5rem;
   width: 100%;
   max-width: 500px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -32,19 +32,19 @@
 }
 
 .logo-container {
-  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .logo-icon {
-  font-size: clamp(2rem, 5vw, 2.5rem);
-  margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
+  font-size: 2.25rem;
+  margin-bottom: 0.625rem;
 }
 
 .logo-text {
-  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-size: 1.375rem;
   font-weight: bold;
   color: #333;
   margin: 0;
@@ -52,9 +52,9 @@
 }
 
 .title {
-  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  font-size: 1.625rem;
   color: #333;
-  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+  margin-bottom: 1.75rem;
   font-weight: normal;
   font-family: var(--title-font);
 }
@@ -62,7 +62,7 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2vw, 1.25rem);
+  gap: 1.125rem;
 }
 
 .input-group {
@@ -71,11 +71,11 @@
 
 .form-input {
   width: 100%;
-  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem);
-  border-radius: 25px;
+  padding: 0.875rem 1.25rem;
+  border-radius: 10px;
   border: none;
   background: rgba(255, 255, 255, 0.9);
-  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-size: 1rem;
   color: #555;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
@@ -86,33 +86,9 @@
   color: #888;
 }
 
-.submit-btn {
-  background-color: #2e5c46;
-  color: white;
-  padding: clamp(0.75rem, 2vw, 1rem);
-  border: none;
-  border-radius: 25px;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
-  text-transform: uppercase;
-  transition: background-color 0.3s;
-}
-
-.submit-btn:hover {
-  background-color: #244a38;
-}
-
-.submit-btn:disabled {
-  background-color: #f0f0f0;
-  color: #274421;
-  cursor: not-allowed;
-}
-
 .footer-login {
   margin-top: 25px;
-  font-size: 14px;
+  font-size: 1rem;
   color: #333;
   display: flex;
   justify-content: center;
@@ -156,7 +132,7 @@
 }
 
 .error-text {
-  color: #d32f2f;
+  color: #ae8179;
   font-size: 12px;
   margin-top: 4px;
   display: block;
@@ -165,7 +141,7 @@
 }
 
 .form-input.input-error {
-  border: 2px solid #d32f2f;
+  border: 2px solid #ae8179;
   background-color: #fef5f5;
 }
 
@@ -174,19 +150,19 @@
 }
 
 .form-input.input-error:focus {
-  border: 2px solid #d32f2f;
+  border: 2px solid #ae8179;
 }
 
 .btn-primary {
   background-color: var(--primary-button);
   color: white;
-  padding: clamp(0.75rem, 2vw, 1rem);
+  padding: 0.875rem;
   border: none;
-  border-radius: 25px;
-  font-size: clamp(0.875rem, 2vw, 1rem);
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+  margin-top: 0.625rem;
   text-transform: uppercase;
   transition: background-color 0.3s;
 }

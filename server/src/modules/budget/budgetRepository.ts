@@ -19,7 +19,26 @@ type Expense = {
   shares?: ExpenseShare[];
 };
 
+type ExpenseCategory = {
+  id: number;
+  name: string;
+};
+
 class BudgetRepository {
+  async ensureDefaultCategories() {
+    await databaseClient.query(
+      `
+      INSERT IGNORE INTO expense_category (id, name)
+      VALUES
+        (1, 'Transport'),
+        (2, 'Logement'),
+        (3, 'Nourriture'),
+        (4, 'Activités'),
+        (5, 'Autre')
+      `,
+    );
+  }
+
   async findExpenseByTrip(tripId: number) {
     const [rows] = await databaseClient.query<Rows>(
       "SELECT * FROM expense where  trip_id = ?",
@@ -77,12 +96,30 @@ ORDER BY e.id DESC
     amount: number,
     paid_by: number,
     category_id: number,
+    date: string = new Date().toISOString().split('T')[0],
   ) {
     const [result] = await databaseClient.query<Result>(
-      "INSERT INTO expense (trip_id, title, amount, paid_by, category_id) VALUES (?, ?, ?, ?, ?)",
-      [tripId, title, amount, paid_by, category_id],
+      "INSERT INTO expense (trip_id, title, amount, paid_by, category_id, date) VALUES (?, ?, ?, ?, ?, ?)",
+      [tripId, title, amount, paid_by, category_id, date],
     );
     return result.insertId;
+  }
+
+  async categoryExists(categoryId: number) {
+    const [rows] = await databaseClient.query<Rows>(
+      "SELECT id FROM expense_category WHERE id = ? LIMIT 1",
+      [categoryId],
+    );
+
+    return rows.length > 0;
+  }
+
+  async findCategories() {
+    const [rows] = await databaseClient.query<Rows>(
+      "SELECT id, name FROM expense_category ORDER BY id ASC",
+    );
+
+    return rows as ExpenseCategory[];
   }
 
   async readAll() {

@@ -143,7 +143,8 @@ class TripRepository {
         t.end_at, 
         t.image_url,
         u.firstname AS creator_firstname,
-        u.lastname AS creator_lastname
+        u.lastname AS creator_lastname,
+        CASE WHEN t.user_id = ? THEN 'organizer' ELSE 'participant' END AS role
       FROM trip t
       JOIN user u ON t.user_id = u.id
       LEFT JOIN invitation i ON i.trip_id = t.id AND i.user_id = ?
@@ -151,7 +152,7 @@ class TripRepository {
         (t.user_id = ? OR i.status = 'accepted')
         ${dateCondition}
       ORDER BY t.start_at ASC`,
-      [userId, userId],
+      [userId, userId, userId],
     );
     return rows as Trip[];
   }

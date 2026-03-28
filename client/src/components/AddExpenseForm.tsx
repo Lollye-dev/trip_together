@@ -1,5 +1,5 @@
 import "../styles/AddExpenseForm.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 type Member = {
@@ -14,12 +14,47 @@ type AddExpenseFormProps = {
   onSuccess: () => void;
 };
 
+type ExpenseCategory = {
+  id: number;
+  name: string;
+};
+
 function AddExpenseForm({ tripId, members, onSuccess }: AddExpenseFormProps) {
   const { auth } = useAuth();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [paidBy, setPaidBy] = useState("");
+  const [date, setDate] = useState("");
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      if (!auth?.token) return;
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/expenses/categories`,
+          {
+            headers: {
+              Authorization: `Bearer ${auth.token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Erreur chargement catégories");
+        }
+
+        const data = (await response.json()) as ExpenseCategory[];
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadCategories();
+  }, [auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +64,7 @@ function AddExpenseForm({ tripId, members, onSuccess }: AddExpenseFormProps) {
       return;
     }
 
-    if (!title || !amount || !categoryId || !paidBy) {
+    if (!title || !amount || !categoryId || !paidBy || !date) {
       console.error("Champs manquants");
       return;
     }
@@ -49,6 +84,7 @@ function AddExpenseForm({ tripId, members, onSuccess }: AddExpenseFormProps) {
             amount: Number(amount),
             paid_by: Number(paidBy),
             category_id: Number(categoryId),
+            date,
           }),
         },
       );
@@ -90,11 +126,11 @@ function AddExpenseForm({ tripId, members, onSuccess }: AddExpenseFormProps) {
         required
       >
         <option value="">Choisir une catégorie</option>
-        <option value="1">Transport</option>
-        <option value="2">Nourriture</option>
-        <option value="3">Logement</option>
-        <option value="4">Autre</option>
-        <option value="5">Activité</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
       </select>
 
       <select
@@ -109,6 +145,13 @@ function AddExpenseForm({ tripId, members, onSuccess }: AddExpenseFormProps) {
           </option>
         ))}
       </select>
+
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        required
+      />
 
       <button type="submit">Enregistrer</button>
     </form>

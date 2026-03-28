@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import "../styles/Navbar.css";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [openNavBar, setOpenNavBar] = useState(false);
   const { auth, logout } = useAuth();
 
@@ -30,6 +31,7 @@ export default function Navbar() {
   const closelogout = () => {
     logout();
     closeMenu();
+    navigate("/");
   };
 
   return (
@@ -44,9 +46,15 @@ export default function Navbar() {
       </div>
 
       <div className="navbar-center">
-        <Link className="navbar-page-title" to="/my-trips" onClick={closeMenu}>
-          Mes voyages
-        </Link>
+        {location.pathname !== "/my-trips" && (
+          <Link
+            className="navbar-page-title"
+            to="/my-trips"
+            onClick={closeMenu}
+          >
+            Mes voyages
+          </Link>
+        )}
       </div>
 
       <div className="navbar-right">

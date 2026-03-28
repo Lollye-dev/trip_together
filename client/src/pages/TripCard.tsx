@@ -29,8 +29,8 @@ function TripCard({
       <article className="tripcard-component">
         <div className="tripcard-top">
           <div className="tripcard-header">
-            <h2 className="tripcard-title">{title}</h2>
-            <h3 className="tripcard-description">{description}</h3>
+            <h1 className="tripcard-title">{title}</h1>
+            <h2 className="tripcard-description">{description}</h2>
           </div>
 
           {role === "organizer" && onInvite && (

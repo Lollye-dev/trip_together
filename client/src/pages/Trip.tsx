@@ -2,7 +2,7 @@ import NavTabs from "../components/NavTabs";
 import TripInfos from "../components/TripInfos";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/Trip.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import StepCard from "../components/StepCard";
@@ -22,17 +22,18 @@ function Trip() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const authErrorHandledRef = useRef(false);
 
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const currentUserId = auth?.user?.id || 0;
-  const token = auth?.token || localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) {
+    if (!auth?.token) {
       navigate("/login");
-      toast.error("Veuillez vous connecter");
       return;
     }
+
+    authErrorHandledRef.current = false;
 
     if (!tripId) {
       navigate("/", {
@@ -51,21 +52,22 @@ function Trip() {
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${auth?.token}`,
       },
     })
       .then(async (response) => {
         const data = await response.json();
 
         if (response.status === 401) {
-          if (data.error === "Token expired") {
-            localStorage.removeItem("token");
+          if (!authErrorHandledRef.current && data.error === "Token expired") {
+            authErrorHandledRef.current = true;
+            logout();
             navigate("/login");
             toast.error("Session expirée. Veuillez vous reconnecter.");
-            return;
+          } else if (!authErrorHandledRef.current) {
+            authErrorHandledRef.current = true;
+            navigate("/login");
           }
-          toast.error("Veuillez vous connecter pour accéder à ce voyage.");
-          navigate("/login");
           return;
         }
 
@@ -85,21 +87,22 @@ function Trip() {
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}/steps`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${auth?.token}`,
       },
     })
       .then(async (response) => {
         const data = await response.json();
 
         if (response.status === 401) {
-          if (data.error === "Token expired") {
-            localStorage.removeItem("token");
+          if (!authErrorHandledRef.current && data.error === "Token expired") {
+            authErrorHandledRef.current = true;
+            logout();
             navigate("/login");
             toast.error("Session expirée. Veuillez vous reconnecter.");
-            return;
+          } else if (!authErrorHandledRef.current) {
+            authErrorHandledRef.current = true;
+            navigate("/login");
           }
-          toast.error("Veuillez vous connecter pour accéder à ce voyage.");
-          navigate("/login");
           return;
         }
 
@@ -114,14 +117,14 @@ function Trip() {
         console.error(err);
         toast.error("Impossible de charger les étapes");
       });
-  }, [tripId, token, navigate]);
+  }, [tripId, auth?.token, navigate, logout]);
 
   const validatedSteps = steps.filter((s) => s.status === "validated");
 
   return (
     <>
       {!loading && myTrip && <TripInfos trip={myTrip} />}
-      <main className="trip-page">
+      <div className="trip-page">
         <NavTabs />
         <section className="steps-section">
           <h2 className="section-title">Récapitulatif du voyage</h2>
@@ -151,7 +154,7 @@ function Trip() {
             </section>
           )}
         </section>
-      </main>
+      </div>
     </>
   );
 }

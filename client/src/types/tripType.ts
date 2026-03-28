@@ -49,6 +49,7 @@ export type TheTrip = {
   user_id?: number;
   participants?: number;
   role?: "organizer" | "participant";
+  creator_firstname?: string;
 };
 
 export type TripInfosProps = {
@@ -66,3 +67,4 @@ export type TripCardProps = {
   role?: "organizer" | "participant";
   onInvite?: () => void;
 };
+

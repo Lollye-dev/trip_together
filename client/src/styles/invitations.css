@@ -1,9 +1,9 @@
 .page-membre {
   max-width: 1200px;
   margin: auto;
-  padding: 0 clamp(1rem, 3vw, 2rem);
+  padding: 0 1.5rem;
 }
 
 #member-list {
-  margin-top: clamp(40px, 8vh, 60px);
+  margin-top: 50px;
 }

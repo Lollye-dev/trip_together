@@ -1,0 +1,82 @@
+/* Confirmation Modal Styles */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.modal {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+}
+
+.modal h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--title-font);
+}
+
+.modal p {
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: var(--grey-text);
+  font-family: var(--body-text);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-role,
+.btn-danger {
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: var(--body-text);
+  font-weight: 600;
+  padding: 6px 14px;
+  min-width: 100px;
+  min-height: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-role {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.btn-role:hover:not(:disabled) {
+  background-color: #d1d5db;
+}
+
+.btn-role:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  background-color: var(--brown);
+  color: #ffffff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #aa514b;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

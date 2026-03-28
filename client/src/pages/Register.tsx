@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import type { ChangeEventHandler, FormEventHandler } from "react";
 import { useNavigate } from "react-router";
-// import { useToast } from "../hooks/useToast";
 import { toast } from "react-toastify";
 import { useEmailValidation } from "../hooks/useEmailValidation";
 import "../styles/Login.css";
@@ -14,7 +13,6 @@ function Register() {
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  // const { toast } = useToast();
   const { email, emailError, handleEmailChange, handleEmailBlur } =
     useEmailValidation();
 
@@ -34,7 +32,6 @@ function Register() {
     event.preventDefault();
     setErrors([]);
 
-    // Client-side validation
     if (!email || emailError) {
       toast.error("Veuillez remplir une adresse email valide");
       return;
@@ -78,8 +75,14 @@ function Register() {
       );
 
       if (response.status === 201) {
-        toast.success("Inscription réussie");
-        navigate("/login");
+        navigate("/login", {
+          state: {
+            toast: {
+              type: "success",
+              message: "Inscription réussie",
+            },
+          },
+        });
       } else if (response.status === 400) {
         const data = await response.json();
         setErrors(
@@ -120,6 +123,7 @@ function Register() {
               ref={lastnameRef}
               type="text"
               id="lastname"
+              autoComplete="family-name"
               className="form-input"
               placeholder="Nom"
               minLength={2}
@@ -133,6 +137,7 @@ function Register() {
               ref={firstnameRef}
               type="text"
               id="firstname"
+              autoComplete="given-name"
               className="form-input"
               placeholder="Prénom"
               minLength={2}
@@ -145,6 +150,7 @@ function Register() {
             <input
               type="email"
               id="email"
+              autoComplete="email"
               className={`form-input ${emailError ? "input-error" : ""}`}
               placeholder="Email"
               value={email}
@@ -162,6 +168,7 @@ function Register() {
             <input
               type="password"
               id="password"
+              autoComplete="new-password"
               className="form-input"
               value={password}
               onChange={handlePasswordChange}
@@ -178,6 +185,7 @@ function Register() {
             <input
               type="password"
               id="confirm-password"
+              autoComplete="new-password"
               className={`form-input ${password && confirmPassword && password !== confirmPassword ? "input-error" : ""}`}
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
@@ -189,11 +197,7 @@ function Register() {
             )}
           </div>
 
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={isLoading || !!emailError}
-          >
+          <button type="submit" className="btn-primary" disabled={isLoading}>
             {isLoading ? "Inscription en cours..." : "S'inscrire"}
           </button>
 

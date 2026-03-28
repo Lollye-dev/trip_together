@@ -45,6 +45,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Headings — neutralise le gras et la taille par défaut */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
 /* Lists */
 ul,
 ol {
@@ -64,7 +75,7 @@ video,
 canvas,
 svg {
   display: block;
-  max-width: 100%;
+  /* max-width: 100%; */
 }
 
 /* Forms - preserve body font */
@@ -77,6 +88,8 @@ select {
   color: inherit;
   border: none;
   background: none;
+  appearance: none; /* supprime les styles natifs (ex: select, input[type="number"]) */
+  -webkit-appearance: none;
 }
 
 /* Tables */

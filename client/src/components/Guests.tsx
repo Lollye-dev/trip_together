@@ -23,7 +23,8 @@ function Guests(props: GuestsProps) {
   return (
     <article className="guests-article">
       <h3>
-        {title} ({invited.length})
+        {title}
+        <span className="guest-count">({invited.length})</span>
       </h3>
       <ul>
         {invited.map((invitation) => (

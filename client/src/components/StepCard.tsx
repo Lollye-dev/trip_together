@@ -3,6 +3,8 @@ import { useAuth } from "../contexts/AuthContext";
 import type { StepCardProps } from "../types/tripType";
 import type { CreateVotePayload, Vote, VotesStats } from "../types/voteType";
 import "../styles/StepCard.css";
+import "../styles/ConfirmationModal.css";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 function StepCard({
@@ -19,9 +21,12 @@ function StepCard({
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showVotes, setShowVotes] = useState(false);
+  const [stepToDelete, setStepToDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { auth, logout } = useAuth();
   const token = auth?.token;
+  const navigate = useNavigate();
 
   const stepImage = step.image_url || "/images/default-city.jpg";
   const thumbsUpLogo = (
@@ -51,7 +56,14 @@ function StepCard({
       .then(async (response) => {
         if (response.status === 401) {
           logout();
-          window.location.href = "/login";
+          navigate("/login", {
+            state: {
+              toast: {
+                type: "error",
+                message: "Votre session a expiré. Veuillez vous reconnecter.",
+              },
+            },
+          });
           return;
         }
 
@@ -98,7 +110,14 @@ function StepCard({
       .then(async (response) => {
         if (response.status === 401) {
           logout();
-          window.location.href = "/login";
+          navigate("/login", {
+            state: {
+              toast: {
+                type: "error",
+                message: "Votre session a expiré. Veuillez vous reconnecter.",
+              },
+            },
+          });
           return;
         }
 
@@ -109,12 +128,9 @@ function StepCard({
 
         loadVotes();
 
-        if (onVoteSuccess) {
-          onVoteSuccess();
-        }
+        if (onVoteSuccess) onVoteSuccess();
       })
       .catch((err) => {
-        console.error("Erreur lors du vote:", err);
         setError(err instanceof Error ? err.message : "Erreur lors du vote");
       })
       .finally(() => {
@@ -128,9 +144,12 @@ function StepCard({
   const noVotes = step.voteStats?.no ?? 0;
   const totalVotes = yesVotes + noVotes;
   const yesPercentage = totalVotes === 0 ? 0 : (yesVotes / totalVotes) * 100;
-  const handleDeleteStep = async () => {
-    if (!window.confirm("Supprimer cette étape ?")) return;
+  const handleDeleteStep = () => {
+    setStepToDelete(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/trips/${tripId}/steps/${step.id}`,
@@ -142,180 +161,226 @@ function StepCard({
 
       if (response.ok) {
         if (onVoteSuccess) onVoteSuccess();
-        toast.success("Étape supprimée");
+        toast.success("Etape supprimée");
+        setStepToDelete(false);
       }
     } catch {
       toast.error("Erreur lors de la suppression");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return (
-    <div className="step-card">
-      <img
-        src={stepImage}
-        alt={`Vue de ${step.city}`}
-        className="step-bg-img"
-        referrerPolicy="no-referrer"
-        style={{
-          minHeight: "180px",
-          display: "block",
-          backgroundColor: "#f0f0f0",
-          objectFit: "cover",
-        }}
-      />{" "}
-      <article className="step-header">
-        {!step.is_initial && isOwner && (
-          <button
-            type="button"
-            onClick={handleDeleteStep}
-            className="delete-step-btn"
-            title="Supprimer cette étape"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-6"
+    <>
+      <div className="step-card">
+        <img
+          src={stepImage}
+          alt={`Vue de ${step.city}`}
+          className="step-bg-img"
+          referrerPolicy="no-referrer"
+          style={{
+            minHeight: "180px",
+            display: "block",
+            backgroundColor: "#f0f0f0",
+            objectFit: "cover",
+          }}
+        />{" "}
+        <article className="step-header">
+          {!step.is_initial && isOwner && (
+            <button
+              type="button"
+              onClick={handleDeleteStep}
+              className="delete-step-btn"
+              title="Supprimer cette étape"
             >
-              <title>Poubelle</title>
-              <path
-                fillRule="evenodd"
-                d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-3.536 4.569a.75.75 0 0 0-1.44.32l.5 10a.75.75 0 0 0 1.498-.06l-.558-10.26Zm4.5 0a.75.75 0 0 0-1.5 0v10.26a.75.75 0 0 0 1.5 0v-10.26Zm3.536.26a.75.75 0 0 0-1.44-.32l-.558 10.26a.75.75 0 0 0 1.498.06l.5-10Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-6"
+              >
+                <title>Poubelle</title>
+                <path
+                  fillRule="evenodd"
+                  d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-3.536 4.569a.75.75 0 0 0-1.44.32l.5 10a.75.75 0 0 0 1.498-.06l-.558-10.26Zm4.5 0a.75.75 0 0 0-1.5 0v10.26a.75.75 0 0 0 1.5 0v-10.26Zm3.536.26a.75.75 0 0 0-1.44-.32l-.558 10.26a.75.75 0 0 0 1.498.06l.5-10Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          )}
 
-        <h2>{step.city}</h2>
-        <h3>{step.country}</h3>
-        <h3 id="step-header-end">Proposée par {step.creator_name} </h3>
-      </article>
-      {step.is_initial ? (
-        <div className="step-initial">
-          <p className="step-initial-msg">Étape initiale</p>
-        </div>
-      ) : (
-        <article className="step-body">
-          <div className="vote-progress">
-            <div className="vote-stats">
-              <span className="stat-value yes">
-                {thumbsUpLogo} {yesVotes}
-              </span>
-              <span className="stat-value no">
-                {thumbsDownLogo} {noVotes}
-              </span>
-            </div>
-            <div className="vote-bar">
-              <div
-                className="vote-bar-yes"
-                style={{ width: `${yesPercentage}%` }}
-              />
-            </div>
+          <h2>{step.city}</h2>
+          <h3>{step.country}</h3>
+          <h3 id="step-header-end">
+            Proposée par <strong>{step.creator_name}</strong>
+          </h3>
+        </article>
+        {step.is_initial ? (
+          <div className="step-initial">
+            <p className="step-initial-msg">Étape initiale</p>
           </div>
-          {allVotes && allVotes.length > 0 ? (
-            <div className="all-votes-section">
+        ) : (
+          <article className="step-body">
+            <div className="vote-progress">
+              <div className="vote-stats">
+                <span className="stat-value yes">
+                  {thumbsUpLogo} {yesVotes}
+                </span>
+                <span className="stat-value no">
+                  {thumbsDownLogo} {noVotes}
+                </span>
+              </div>
+              <div className="vote-bar">
+                <div
+                  className="vote-bar-yes"
+                  style={{ width: `${yesPercentage}%` }}
+                />
+              </div>
+            </div>
+            {allVotes && allVotes.length > 0 ? (
+              <div className="all-votes-section">
+                <button
+                  type="button"
+                  onClick={() => setShowVotes(!showVotes)}
+                  className="toggle-votes-btn"
+                >
+                  {showVotes ? "▲ Masquer" : "▼ Voir"} tous les votes (
+                  {allVotes.length} / {memberCount})
+                </button>
+                {showVotes && (
+                  <div className="votes-list">
+                    {allVotes.map((vote) => (
+                      <div
+                        key={vote.id}
+                        className={`vote-item ${vote.vote ? "vote-yes-item" : "vote-no-item"}`}
+                      >
+                        <div className="vote-content">
+                          <p className="vote-user">
+                            {vote.user_name}
+                            <span className="vote-value">
+                              {vote.vote ? thumbsUpLogo : thumbsDownLogo}
+                            </span>
+                          </p>
+                          {vote.comment && (
+                            <p className="vote-comment-text">
+                              "{vote.comment}"
+                            </p>
+                          )}
+                        </div>
+                        <span className="vote-date">
+                          {new Date(vote.created_at).toLocaleDateString(
+                            "fr-FR",
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="no-votes-placeholder">
+                <p className="toggle-votes-btn">En attente de vote</p>
+              </div>
+            )}
+            {error && <p className="error">{error}</p>}
+            {loading ? (
+              <p className="loading-text">Chargement</p>
+            ) : !hasVoted ? (
+              <div className="vote-section">
+                <div className="vote-buttons">
+                  <button
+                    type="button"
+                    onClick={() => handleVote(true)}
+                    disabled={alreadyVoted}
+                    className="vote-btn vote-yes"
+                  >
+                    {alreadyVoted ? (
+                      "Envoi..."
+                    ) : (
+                      <span className="vote-yes-btn">
+                        <span className="vote-yes-icon" />
+                        OUI
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleVote(false)}
+                    disabled={alreadyVoted}
+                    className="vote-btn vote-no"
+                  >
+                    {alreadyVoted ? (
+                      "Envoi..."
+                    ) : (
+                      <span className="vote-no-btn">
+                        <span className="vote-no-icon" />
+                        NON
+                      </span>
+                    )}
+                  </button>
+                </div>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Commentaire (optionnel)"
+                  maxLength={500}
+                  disabled={alreadyVoted}
+                  className="vote-comment"
+                  rows={3}
+                />
+                <p className="comment-counter">
+                  {comment.length}/500 caractères
+                </p>
+              </div>
+            ) : (
+              <div className="voted-message">
+                <p className="voted-text">
+                  {userVote?.vote ? (
+                    <span className="voted-yes">{thumbsUpLogo} Voté OUI</span>
+                  ) : (
+                    <span className="voted-no">{thumbsDownLogo} Voté NON</span>
+                  )}
+                </p>
+              </div>
+            )}
+          </article>
+        )}
+      </div>
+
+      {stepToDelete && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h4>Supprimer cette étape ?</h4>
+            <p>
+              Voulez-vous vraiment supprimer l'étape{" "}
+              <strong>
+                {step.city}, {step.country}
+              </strong>{" "}
+              ?
+            </p>
+            <div className="modal-actions">
               <button
                 type="button"
-                onClick={() => setShowVotes(!showVotes)}
-                className="toggle-votes-btn"
+                className="btn-role"
+                onClick={() => setStepToDelete(false)}
+                disabled={isDeleting}
               >
-                {showVotes ? "▲ Masquer" : "▼ Voir"} tous les votes (
-                {allVotes.length} / {memberCount})
+                Annuler
               </button>
-              {showVotes && (
-                <div className="votes-list">
-                  {allVotes.map((vote) => (
-                    <div
-                      key={vote.id}
-                      className={`vote-item ${vote.vote ? "vote-yes-item" : "vote-no-item"}`}
-                    >
-                      <div className="vote-content">
-                        <p className="vote-user">
-                          {vote.user_name}
-                          <span className="vote-value">
-                            {vote.vote ? thumbsUpLogo : thumbsDownLogo}
-                          </span>
-                        </p>
-                        {vote.comment && (
-                          <p className="vote-comment-text">"{vote.comment}"</p>
-                        )}
-                      </div>
-                      <span className="vote-date">
-                        {new Date(vote.created_at).toLocaleDateString("fr-FR")}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Suppression..." : "Confirmer"}
+              </button>
             </div>
-          ) : (
-            <div className="no-votes-placeholder">
-              <p className="toggle-votes-btn">En attente de vote</p>
-            </div>
-          )}
-          {error && <p className="error">{error}</p>}
-          {loading ? (
-            <p className="loading-text">Chargement</p>
-          ) : !hasVoted ? (
-            <div className="vote-section">
-              <div className="vote-buttons">
-                <button
-                  type="button"
-                  onClick={() => handleVote(true)}
-                  disabled={alreadyVoted}
-                  className="vote-btn vote-yes"
-                >
-                  {alreadyVoted ? (
-                    "Envoi..."
-                  ) : (
-                    <span className="vote-yes-btn">
-                      <span className="vote-yes-icon" />
-                      OUI
-                    </span>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleVote(false)}
-                  disabled={alreadyVoted}
-                  className="vote-btn vote-no"
-                >
-                  {alreadyVoted ? (
-                    "Envoi..."
-                  ) : (
-                    <span className="vote-no-btn">
-                      <span className="vote-no-icon" />
-                      NON
-                    </span>
-                  )}
-                </button>
-              </div>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Commentaire (optionnel)"
-                maxLength={500}
-                disabled={alreadyVoted}
-                className="vote-comment"
-                rows={3}
-              />
-              <p className="comment-counter">{comment.length}/500 caractères</p>
-            </div>
-          ) : (
-            <div className="voted-message">
-              <p className="voted-text">
-                {userVote?.vote ? (
-                  <span className="voted-yes">{thumbsUpLogo} Voté OUI</span>
-                ) : (
-                  <span className="voted-no">{thumbsDownLogo} Voté NON</span>
-                )}
-              </p>
-            </div>
-          )}
-        </article>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

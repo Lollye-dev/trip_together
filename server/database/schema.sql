@@ -52,6 +52,7 @@ CREATE TABLE invitation (
     ON DELETE CASCADE,
   CONSTRAINT fk_invitation_trip
     FOREIGN KEY (trip_id) REFERENCES trip(id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE vote (

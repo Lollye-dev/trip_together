@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import AddStep from "../components/AddStep";
@@ -26,8 +26,22 @@ function Steps() {
   const loading = loadingTrip || loadingSteps;
 
   const { auth, logout } = useAuth();
+  const authErrorHandledRef = useRef(false);
   const currentUserId = auth?.user?.id || 0;
   const token = auth?.token;
+
+  const handleUnauthorized = useCallback(
+    (showToast = true) => {
+      if (authErrorHandledRef.current) return;
+      authErrorHandledRef.current = true;
+      logout();
+      if (showToast) {
+        toast.error("Session expirée. Veuillez vous reconnecter.");
+      }
+      navigate("/login");
+    },
+    [logout, navigate],
+  );
 
   const fetchTrip = useCallback(async () => {
     try {
@@ -38,7 +52,7 @@ function Steps() {
         {
           method: "GET",
           headers: {
-            Authorization: token ? `Bearer ${token}` : "",
+            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -47,14 +61,10 @@ function Steps() {
 
       if (response.status === 401) {
         if (data.error === "Token expired") {
-          logout();
-          toast.error("Session expirée. Veuillez vous reconnecter.");
-          navigate("/login");
+          handleUnauthorized();
           return;
         }
-        logout();
-        toast.error("Veuillez vous connecter pour accéder à ce voyage.");
-        navigate("/login");
+        handleUnauthorized(false);
         return;
       }
 
@@ -64,12 +74,11 @@ function Steps() {
 
       setTrip(data);
     } catch (err) {
-      console.error(err);
       toast.error("Impossible de charger le voyage");
     } finally {
       setLoadingTrip(false);
     }
-  }, [tripId, token, logout, navigate]);
+  }, [tripId, token, handleUnauthorized]);
 
   const fetchSteps = useCallback(async () => {
     try {
@@ -80,7 +89,7 @@ function Steps() {
         {
           method: "GET",
           headers: {
-            Authorization: token ? `Bearer ${token}` : "",
+            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -88,20 +97,31 @@ function Steps() {
       const result: StepsResponse = await response.json();
 
       if (response.status === 401) {
-        logout();
-        navigate("/login");
+        handleUnauthorized();
         return;
       }
 
       if (response.status === 400) {
-        toast.error("Requête invalide");
-        navigate("/");
+        navigate("/", {
+          state: {
+            toast: {
+              type: "error",
+              message: "Requête invalide",
+            },
+          },
+        });
         return;
       }
 
       if (response.status === 403) {
-        toast.error("Accès non autorisé");
-        navigate("/");
+        navigate("/", {
+          state: {
+            toast: {
+              type: "error",
+              message: "Accès non autorisé",
+            },
+          },
+        });
         return;
       }
 
@@ -117,25 +137,31 @@ function Steps() {
       setSteps(result.steps);
       setMemberCount(result.trip.memberCount);
     } catch (err) {
-      console.error("Erreur fetch steps:", err);
       toast.error("Impossible de charger les étapes");
     } finally {
       setLoadingSteps(false);
     }
-  }, [tripId, token, logout, navigate]);
+  }, [tripId, token, handleUnauthorized, navigate]);
 
   useEffect(() => {
     if (!id || Number.isNaN(tripId)) {
-      toast.error("Voyage invalide");
-      navigate("/");
+      navigate("/", {
+        state: {
+          toast: {
+            type: "error",
+            message: "Voyage invalide",
+          },
+        },
+      });
       return;
     }
 
     if (!token) {
-      toast.error("Vous devez être connecté");
       navigate("/login");
       return;
     }
+
+    authErrorHandledRef.current = false;
 
     fetchTrip();
     fetchSteps();

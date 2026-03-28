@@ -1,27 +1,27 @@
 .home {
   width: 100%;
   margin: auto;
-  padding: 0 clamp(1rem, 3vw, 2rem);
+  padding: 0 1.5rem;
   background-color: var(--background);
 }
 
 .hero-section {
   text-align: center;
-  padding: clamp(2rem, 6vw, 4rem) 0;
+  padding: 3rem 0;
 }
 
 .hero-title {
-  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-size: 2rem;
   font-weight: 400;
   font-family: var(--title-font);
-  margin: 0 0 clamp(0.5rem, 2vw, 1rem);
+  margin: 0 0 0.75rem;
   color: #1a1a1a;
 }
 
 .hero-subtitle {
-  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-size: 1.625rem;
   font-weight: 700;
-  margin: 0 0 clamp(1rem, 3vw, 1.5rem);
+  margin: 0 0 1.25rem;
   color: #1a1a1a;
 }
 
@@ -30,23 +30,23 @@
 }
 
 .hero-description {
-  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  font-size: 1rem;
   color: #666;
   max-width: 600px;
-  margin: 0 auto clamp(2rem, 6vw, 4rem);
+  margin: 0 auto 3rem;
   line-height: 1.6;
-  padding: 0 clamp(1rem, 2vw, 1.5rem);
+  padding: 0 1.25rem;
 }
 
 .hero-cta {
   display: flex;
-  gap: clamp(0.75rem, 2vw, 1rem);
+  gap: 0.875rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .btn-cta {
-  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+  padding: 0.6875rem 1.75rem;
   font-weight: 600;
   border-radius: 10px;
   text-decoration: none;
@@ -55,17 +55,9 @@
   cursor: pointer;
   border: 2px solid transparent;
   min-width: auto;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  padding: clamp(0.5rem, 1.5vw, 0.875rem) clamp(1rem, 2.5vw, 1.5rem);
-  width: 100%;
-  max-width: 100%;
-}
-
-@media (min-width: 640px) {
-  .btn-cta {
-    width: auto;
-    max-width: none;
-  }
+  font-size: 1rem;
+  width: auto;
+  max-width: none;
 }
 
 .btn-primairy {
@@ -94,7 +86,7 @@
 }
 
 .image-section {
-  padding: clamp(2rem, 6vw, 4rem) 0;
+  padding: 3rem 0;
 }
 
 .image-container {
@@ -114,47 +106,47 @@
 
 .trips-badge {
   position: absolute;
-  top: clamp(1rem, 3vw, 1.5rem);
-  right: clamp(1rem, 3vw, 1.5rem);
+  top: 1.25rem;
+  right: 1.25rem;
   background-color: white;
-  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem);
+  padding: 0.875rem 1.25rem;
   border-radius: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
-  gap: clamp(0.5rem, 1vw, 0.75rem);
-  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  gap: 0.625rem;
+  font-size: 0.8125rem;
 }
 
 .badge-icon {
   color: #2d7738;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-size: 1.125rem;
 }
 
 .badge-text {
-  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  font-size: 0.8125rem;
   font-weight: 600;
   color: #1a1a1a;
 }
 
 .features-section {
-  padding: clamp(3rem, 8vw, 5rem) 0;
+  padding: 4rem 0;
   text-align: center;
 }
 
 .features-title {
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-size: 1.75rem;
   font-weight: 700;
   font-family: var(--title-font);
-  margin: 0 0 clamp(1.5rem, 4vw, 2rem);
+  margin: 0 0 1.75rem;
   color: var(--black);
 }
 
 .features {
   display: grid;
   grid-template-columns: 1fr;
-  gap: clamp(1.5rem, 3vw, 2rem);
-  margin-top: clamp(1.5rem, 3vw, 2rem);
+  gap: 1.75rem;
+  margin-top: 1.75rem;
 }
 
 @media (min-width: 640px) {
@@ -173,7 +165,7 @@
   background-color: var(--white);
   border: 1px solid #e8e8e8;
   border-radius: 12px;
-  padding: clamp(1.5rem, 3vw, 2rem);
+  padding: 1.75rem;
   transition: all 0.3s ease;
   max-width: 100%;
 }
@@ -198,7 +190,7 @@
 }
 
 .feature-card-description {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #666;
   line-height: 1.6;
   margin: 0;
@@ -227,6 +219,7 @@
 
   .btn-cta {
     width: 100%;
+    max-width: 100%;
   }
 
   .features-grid {

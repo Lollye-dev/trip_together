@@ -8,8 +8,8 @@
   --primary-button: #1b5e1d;
   --status: #fbecc3;
   --button-hover: #247c28;
-  --brown: #ae8179;
-  --light-brown: lch(92.72% 8.07 59.2);
+  --brown: #ad766c;
+  --light-brown: #f8e7dd;
   --light-green: #c6d6c6;
   --grey-text: #555;
 
@@ -28,27 +28,22 @@
   --space-S: 8px;
   --space-XS: 4px;
 
-  /* Clamp variables pour le responsive */
-  /* Spacing - Padding, margin, gap */
   --clamp-spacing-xl: clamp(2rem, 5vw, 3.75rem);
   --clamp-spacing-lg: clamp(1.5rem, 3vw, 2rem);
   --clamp-spacing-md: clamp(1rem, 3vw, 2rem);
   --clamp-spacing-sm: clamp(0.75rem, 2vw, 1rem);
   --clamp-spacing-xs: clamp(0.5rem, 1.5vw, 0.75rem);
 
-  /* Font sizes */
   --clamp-font-xl: clamp(2rem, 5vw, 2.5rem);
   --clamp-font-lg: clamp(1.25rem, 3vw, 1.5rem);
   --clamp-font-md: clamp(1rem, 2.5vw, 1.1rem);
   --clamp-font-sm: clamp(0.875rem, 2vw, 1rem);
   --clamp-font-xs: clamp(0.75rem, 1.5vw, 0.875rem);
 
-  /* Border radius */
   --clamp-radius-lg: clamp(12px, 3vw, 20px);
   --clamp-radius-md: clamp(8px, 2vw, 12px);
   --clamp-radius-sm: clamp(6px, 1.5vw, 8px);
 
-  /* Dimensions - Width, height */
   --clamp-size-lg: clamp(80px, 12vw, 100px);
   --clamp-size-md: clamp(60px, 10vw, 80px);
   --clamp-size-sm: clamp(2rem, 5vw, 2.25rem);

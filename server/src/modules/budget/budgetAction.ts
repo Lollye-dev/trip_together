@@ -23,7 +23,9 @@ const read: RequestHandler = async (req, res, next) => {
 const add: RequestHandler = async (req, res, next) => {
   try {
     const tripId = Number(req.params.id);
-    const { title, amount, paid_by, category_id } = req.body;
+    const { title, amount, paid_by, category_id, date } = req.body;
+    const numericPaidBy = Number(paid_by);
+    const numericCategoryId = Number(category_id);
 
     if (Number.isNaN(tripId)) {
       res.status(400).json({ error: "ID du voyage invalide" });
@@ -43,13 +45,32 @@ const add: RequestHandler = async (req, res, next) => {
       return;
     }
 
+    if (Number.isNaN(numericPaidBy) || Number.isNaN(numericCategoryId)) {
+      res.status(400).json({ error: "Payeur ou catégorie invalide" });
+      return;
+    }
+
+    await budgetRepository.ensureDefaultCategories();
+
+    const categoryExists = await budgetRepository.categoryExists(
+      numericCategoryId,
+    );
+
+    if (!categoryExists) {
+      res.status(400).json({
+        error: "Catégorie invalide",
+      });
+      return;
+    }
+
     // 1- Crée la dépense
     const expenseId = await budgetRepository.create(
       tripId,
       title,
       numericAmount,
-      Number(paid_by),
-      Number(category_id),
+      numericPaidBy,
+      numericCategoryId,
+      date,
     );
 
     // 2- Récupère les membres du voyage
@@ -81,6 +102,16 @@ const browse: RequestHandler = async (_req, res, next) => {
   try {
     const budgets = await budgetRepository.readAll();
     res.json(budgets);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getCategories: RequestHandler = async (_req, res, next) => {
+  try {
+    await budgetRepository.ensureDefaultCategories();
+    const categories = await budgetRepository.findCategories();
+    res.json(categories);
   } catch (err) {
     next(err);
   }
@@ -140,4 +171,12 @@ const remove: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { read, add, browse, getExpensesByTrip, getSummary, remove };
+export default {
+  read,
+  add,
+  browse,
+  getCategories,
+  getExpensesByTrip,
+  getSummary,
+  remove,
+};

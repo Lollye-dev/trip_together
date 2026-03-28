@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import AddExpenseForm from "../components/AddExpenseForm";
@@ -7,6 +7,7 @@ import Modal from "../components/Modal";
 import NavTabs from "../components/NavTabs";
 import TripInfos from "../components/TripInfos";
 import "../styles/TripBugdetPage.css";
+import "../styles/ConfirmationModal.css";
 import { useAuth } from "../contexts/AuthContext";
 import type { TheTrip } from "../types/tripType";
 
@@ -50,7 +51,8 @@ function TripBudgetPage() {
     balance: 0,
   });
 
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
+  const authErrorHandledRef = useRef(false);
   const navigate = useNavigate();
   const currentUserId = auth?.user?.id;
 
@@ -62,6 +64,20 @@ function TripBudgetPage() {
 
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleUnauthorized = useCallback(() => {
+    if (authErrorHandledRef.current) return;
+    authErrorHandledRef.current = true;
+    logout();
+    navigate("/login", {
+      state: {
+        toast: {
+          type: "error",
+          message: "Votre session a expiré. Veuillez vous reconnecter.",
+        },
+      },
+    });
+  }, [logout, navigate]);
 
   const getTrip = useCallback(async () => {
     try {
@@ -82,10 +98,22 @@ function TripBudgetPage() {
   }, [tripId]);
 
   const getMembers = useCallback(async () => {
+    if (!auth?.token) return;
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/trips/${tripId}/members`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        },
       );
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Erreur chargement participants");
@@ -96,13 +124,25 @@ function TripBudgetPage() {
     } catch (error) {
       toast.error("Erreur chargement participants");
     }
-  }, [tripId]);
+  }, [tripId, auth?.token, handleUnauthorized]);
 
   const getExpenses = useCallback(async () => {
+    if (!auth?.token) return;
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/expenses/${tripId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        },
       );
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Erreur chargement dépenses");
@@ -113,7 +153,7 @@ function TripBudgetPage() {
     } catch (error) {
       toast.error("Erreur chargement dépenses");
     }
-  }, [tripId]);
+  }, [tripId, auth, handleUnauthorized]);
 
   const getSummary = useCallback(async () => {
     if (!auth?.token) return;
@@ -122,15 +162,13 @@ function TripBudgetPage() {
       `${import.meta.env.VITE_API_URL}/api/expenses/${tripId}/summary`,
       {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth?.token}`,
         },
       },
     );
 
     if (response.status === 401) {
-      localStorage.removeItem("token");
-      toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-      navigate("/login");
+      handleUnauthorized();
       return;
     }
 
@@ -141,10 +179,11 @@ function TripBudgetPage() {
 
     const data = await response.json();
     setSummary(data);
-  }, [tripId, auth, navigate]);
+  }, [tripId, auth, handleUnauthorized]);
 
   useEffect(() => {
     if (!tripId) return;
+    authErrorHandledRef.current = false;
     getTrip();
     getMembers();
     getExpenses();
@@ -178,9 +217,7 @@ function TripBudgetPage() {
       );
 
       if (response.status === 401) {
-        localStorage.removeItem("token");
-        toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-        navigate("/login");
+        handleUnauthorized();
         return;
       }
 
@@ -201,7 +238,7 @@ function TripBudgetPage() {
   return (
     <>
       {trip && <TripInfos trip={trip} />}
-      <main className="page-membre trip-budget-page">
+      <div className="page-membre trip-budget-page">
         <NavTabs />
 
         <BudgetSummary
@@ -355,7 +392,7 @@ function TripBudgetPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
     </>
   );
 }

@@ -11,6 +11,7 @@ interface MyPayload extends JwtPayload {
 
 type RequestWithAuth = Request & {
   auth: MyPayload;
+  userId: string;
 };
 
 export const verifyToken: RequestHandler = (req, res, next) => {
@@ -29,10 +30,11 @@ export const verifyToken: RequestHandler = (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.APP_SECRET as string,
+      process.env.JWT_SECRET as string,
     ) as MyPayload;
 
     (req as RequestWithAuth).auth = decoded;
+    (req as RequestWithAuth).userId = decoded.sub;
 
     next();
   } catch (err) {

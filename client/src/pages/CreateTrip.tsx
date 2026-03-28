@@ -2,23 +2,27 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import "../styles/CreateTrip.css";
-import "../styles/mobile.css";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "../constants/maps";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function CreateTrip() {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token") || auth?.token;
 
   useEffect(() => {
-    const isAuthenticated = token || auth?.token;
+    const isAuthenticated = auth?.token;
     if (!isAuthenticated) {
-      toast.error("Vous devez être connecté pour créer un voyage");
-      navigate("/login");
+      navigate("/login", {
+        state: {
+          toast: {
+            type: "error",
+            message: "Vous devez être connecté pour créer un voyage",
+          },
+        },
+      });
     }
-  }, [token, auth?.token, navigate]);
+  }, [auth?.token, navigate]);
 
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
@@ -27,8 +31,7 @@ export default function CreateTrip() {
   const [endOfTrip, setEndOfTrip] = useState({ end_at: "" });
 
   const inputRef = useRef<HTMLDivElement>(null);
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const placeAutocompleteRef = useRef<any>(null);
+  const placeAutocompleteRef = useRef<HTMLElement | null>(null);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLInputElement>(null);
@@ -53,7 +56,6 @@ export default function CreateTrip() {
 
     const initAutocomplete = async () => {
       try {
-        // Importation dynamique de la librairie "places"
         // @ts-ignore
         const { PlaceAutocompleteElement } = (await google.maps.importLibrary(
           "places",
@@ -63,29 +65,40 @@ export default function CreateTrip() {
         const autocomplete = new PlaceAutocompleteElement();
         placeAutocompleteRef.current = autocomplete;
 
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        inputRef.current!.innerHTML = "";
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        inputRef.current!.appendChild(autocomplete);
+        if (inputRef.current) {
+          inputRef.current.innerHTML = "";
+          inputRef.current.appendChild(autocomplete);
+        }
 
         autocomplete.addEventListener(
           "gmp-places-select",
-          // biome-ignore lint/suspicious/noExplicitAny: Google Maps event type
-          async (event: any) => {
-            const place = event.place;
+          async (event: unknown) => {
+            const place = (event as { place?: unknown }).place;
             if (!place) return;
 
-            await place.fetchFields({
+            const placeData = place as unknown as {
+              name?: string;
+              address_components?: Array<{
+                types: string[];
+                long_name: string;
+              }>;
+              photos?: Array<{
+                getUrl: (opts: { maxWidth: number }) => string;
+              }>;
+              fetchFields: (opts: { fields: string[] }) => Promise<void>;
+            };
+
+            await placeData.fetchFields({
               fields: ["address_components", "name", "photos"],
             });
 
-            const cityName = place.name || "";
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            const countryComp = place.address_components?.find((comp: any) =>
+            const cityName = placeData.name || "";
+            const countryComp = placeData.address_components?.find((comp) =>
               comp.types.includes("country"),
             );
             const countryName = countryComp?.long_name;
-            const photoUrl = place.photos?.[0]?.getUrl({ maxWidth: 600 }) || "";
+            const photoUrl =
+              placeData.photos?.[0]?.getUrl({ maxWidth: 600 }) || "";
 
             setCity(cityName);
             if (countryName) setCountry(countryName);
@@ -94,8 +107,8 @@ export default function CreateTrip() {
         );
 
         autocomplete.addEventListener("change", () => {
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          setCity((autocomplete as any).value);
+          const inputElement = autocomplete as HTMLElement & { value: string };
+          setCity(inputElement.value);
         });
       } catch (error) {
         console.error("Error loading Google Maps Places library:", error);
@@ -108,9 +121,7 @@ export default function CreateTrip() {
   const submitCreateTrip = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token") || auth?.token;
-
-    if (!token) {
+    if (!auth?.token) {
       toast.error("Vous devez être connecté");
       return;
     }
@@ -170,16 +181,22 @@ export default function CreateTrip() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${auth?.token}`,
           },
           body: JSON.stringify(newTrip),
         },
       );
 
       if (response.status === 401) {
-        localStorage.removeItem("token");
-        toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-        navigate("/login");
+        logout();
+        navigate("/login", {
+          state: {
+            toast: {
+              type: "error",
+              message: "Votre session a expiré. Veuillez vous reconnecter.",
+            },
+          },
+        });
         return;
       }
 

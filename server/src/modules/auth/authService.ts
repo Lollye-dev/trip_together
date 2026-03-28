@@ -12,7 +12,7 @@ export const verifyPassword = async (
 export const generateToken = (userId: number): string => {
   return jwt.sign(
     { sub: userId.toString() },
-    process.env.APP_SECRET as string,
+    process.env.JWT_SECRET as string,
     { expiresIn: "3h" },
   );
 };

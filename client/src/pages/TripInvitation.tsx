@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
 import { useEmailValidation } from "../hooks/useEmailValidation";
 
@@ -10,6 +10,7 @@ import "../styles/TripInvitation.css";
 type TripInvitationProps = {
   tripId: number;
   title: string;
+  description?: string;
   city: string;
   country: string;
   startAt: string;
@@ -20,6 +21,7 @@ type TripInvitationProps = {
 
 function TripInvitation({
   title,
+  description,
   city,
   country,
   startAt,
@@ -93,14 +95,13 @@ function TripInvitation({
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token") || auth?.token;
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/trips/${id}/invitations`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${auth?.token}`,
           },
           body: JSON.stringify({ email, message }),
         },
@@ -142,8 +143,6 @@ function TripInvitation({
         tabIndex={-1}
         onKeyDown={() => {}}
       >
-        <ToastContainer position="top-right" autoClose={5000} theme="light" />
-
         <div className="tripinvitation-invitation-form">
           <article className="tripinvitation-head">
             <p>Invitez une personne à rejoindre ce voyage</p>
@@ -153,6 +152,9 @@ function TripInvitation({
 
           <article className="tripinvitation-trip-infos">
             <h2>{title}</h2>
+            {description && (
+              <p className="tripinvitation-description">{description}</p>
+            )}
             <p className="tripinvitation-location">
               📍 {city}, {country}
             </p>
@@ -170,7 +172,7 @@ function TripInvitation({
             className="tripinvitation-form-inputs"
           >
             <label className="tripinvitation-email-form">
-              Adresse email*
+              Adresse email *
               <input
                 type="email"
                 value={email}
@@ -179,14 +181,14 @@ function TripInvitation({
                 required
                 placeholder="adresse@email.com"
                 style={{
-                  borderColor: emailError ? "#d32f2f" : undefined,
+                  borderColor: emailError ? "#ae8179" : undefined,
                   backgroundColor: emailError ? "#fef5f5" : undefined,
                 }}
               />
               {emailError && (
                 <span
                   style={{
-                    color: "#d32f2f",
+                    color: "#ae8179",
                     fontSize: "12px",
                     marginTop: "4px",
                     display: "block",
@@ -198,11 +200,10 @@ function TripInvitation({
             </label>
 
             <label className="tripinvitation-message-form">
-              Message
+              Message *
               <textarea
                 value={message}
                 onChange={updateMessage}
-                required
                 placeholder="Ajoutez un message personnalisé..."
               />
             </label>
@@ -210,7 +211,7 @@ function TripInvitation({
             <button
               type="submit"
               className="tripinvitation-btn-send-invitation"
-              disabled={loading || !email || !!emailError || !message.trim()}
+              disabled={loading || !email || !!emailError}
             >
               {loading ? "Copie..." : "Copier le lien d'invitation"}
             </button>

@@ -10,8 +10,6 @@ const router = express.Router();
 router.get("/count", tripActions.count);
 router.get("/info/:id", tripActions.read);
 
-router.get("/:id/members", tripActions.browseMembers);
-
 router.get("/countries", tripActions.browse);
 router.get("/", tripActions.browse);
 
@@ -25,6 +23,8 @@ router.get(
 );
 
 router.use(verifyToken);
+
+router.get("/:id/members", tripActions.browseMembers);
 
 router.get("/:tripId/steps", stepActions.browseSteps);
 router.get("/:tripId/steps/:id/votes", stepActions.browseVotes);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import Guests from "../components/Guests";
@@ -7,7 +7,8 @@ import TripInfos from "../components/TripInfos";
 import { useAuth } from "../contexts/AuthContext";
 import type { Guest, invitationType } from "../types/invitationType";
 import type { TheTrip } from "../types/tripType";
-import "../styles/invitations.css";
+import "../styles/Invitations.css";
+import "../styles/ConfirmationModal.css";
 
 type RouteParams = {
   id: string;
@@ -26,7 +27,7 @@ type InvitationsResponse =
 function Invitations() {
   const { id } = useParams<RouteParams>();
   const tripId = Number(id);
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
 
   const [trip, setTrip] = useState<TheTrip | null>(null);
   const [mytrip, setmyTrip] = useState<TheTrip | null>(null);
@@ -38,8 +39,7 @@ function Invitations() {
   const [deleteInvitation, setdeleteInvitation] = useState<Guest | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
-
-  const token = localStorage.getItem("token") || auth?.token;
+  const authErrorHandledRef = useRef(false);
 
   useEffect(() => {
     if (!tripId) {
@@ -54,20 +54,25 @@ function Invitations() {
       return;
     }
 
+    authErrorHandledRef.current = false;
+
     setLoading(true);
     setError(null);
 
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${auth?.token}`,
       },
     })
 
       .then(async (response) => {
         if (response.status === 401) {
-          localStorage.removeItem("token");
-          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-          navigate("/login");
+          if (!authErrorHandledRef.current) {
+            authErrorHandledRef.current = true;
+            logout();
+            toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+            navigate("/login");
+          }
           return;
         }
         if (!response.ok) {
@@ -83,14 +88,23 @@ function Invitations() {
 
     fetch(`${import.meta.env.VITE_API_URL}/api/trips/${tripId}/invitations`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${auth?.token}`,
       },
     })
       .then(async (response) => {
         if (response.status === 401) {
-          localStorage.removeItem("token");
-          toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-          navigate("/login");
+          if (!authErrorHandledRef.current) {
+            authErrorHandledRef.current = true;
+            logout();
+            navigate("/login", {
+              state: {
+                toast: {
+                  type: "error",
+                  message: "Votre session a expiré. Veuillez vous reconnecter.",
+                },
+              },
+            });
+          }
           return;
         }
 
@@ -175,7 +189,7 @@ function Invitations() {
       .finally(() => {
         setLoading(false);
       });
-  }, [tripId, navigate, token]);
+  }, [tripId, navigate, logout, auth?.token]);
 
   const removeParticipant = (userId: number) => {
     if (!tripId) return;
@@ -187,7 +201,7 @@ function Invitations() {
       {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${auth?.token}`,
         },
       },
     )

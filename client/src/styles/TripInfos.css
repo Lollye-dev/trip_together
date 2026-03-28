@@ -1,9 +1,8 @@
-/* TripInfos.css */
 .trip-header {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  height: clamp(250px, 50vh, 400px);
+  height: 325px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,18 +20,17 @@
 
 #trip-infos {
   width: 100%;
-  margin: clamp(-40px, -8vw, -60px) auto clamp(1rem, 2vw, 1.5rem);
+  margin: -50px auto 1.25rem;
   background: white;
   border-radius: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  padding: clamp(1.25rem, 3vw, 1.5rem);
+  padding: 1.375rem;
   max-width: min(800px, 90vw);
   position: relative;
   z-index: 2;
   min-height: auto;
 }
 
-/* Remove the placeholder pseudo-element */
 #trip-infos::after {
   content: none;
 }
@@ -40,13 +38,13 @@
 .date-main-container {
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2vw, 1rem);
+  gap: 1rem;
   align-items: center;
 }
 
 .date-container {
   display: flex;
-  gap: clamp(1.5rem, 4vw, 2rem);
+  gap: 1.75rem;
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
@@ -56,7 +54,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.25rem, 0.5vw, 0.25rem);
+  gap: 0.25rem;
 }
 
 .info-label {

@@ -1,19 +1,31 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEventHandler } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useEmailValidation } from "../hooks/useEmailValidation";
 import "../styles/Login.css";
-
+import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
 
 function Login() {
   const passwordRef = useRef<HTMLInputElement>(null);
+  const shownMessageRef = useRef<string | null>(null);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { email, emailError, handleEmailChange, handleEmailBlur } =
     useEmailValidation();
+
+  useEffect(() => {
+    const message = location.state?.toast?.message;
+    const type = location.state?.toast?.type;
+
+    if (type === "error" && message && message !== shownMessageRef.current) {
+      toast.error(message);
+      shownMessageRef.current = message;
+    }
+  }, [location.state?.toast?.message, location.state?.toast?.type]);
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
@@ -52,9 +64,9 @@ function Login() {
       if (response.status === 200) {
         const data = await response.json();
         setAuth(data);
-        localStorage.setItem("token", data.token);
         localStorage.setItem("auth", JSON.stringify(data));
-        navigate("/", { replace: true });
+        const from = location.state?.from?.pathname || "/";
+        navigate(from, { replace: true });
         window.scrollTo({ top: 0 });
       } else if (response.status === 401) {
         setError("Email ou mot de passe incorrect");
@@ -89,6 +101,7 @@ function Login() {
               id="email"
               className={`form-input ${emailError ? "input-error" : ""}`}
               placeholder="Email"
+              autoComplete="email"
               value={email}
               onChange={(e) => handleEmailChange(e.target.value)}
               onBlur={handleEmailBlur}
@@ -111,11 +124,7 @@ function Login() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={isLoading || !!emailError || !email}
-          >
+          <button type="submit" className="btn-primary" disabled={isLoading}>
             {isLoading ? "Connexion en cours..." : "SE CONNECTER"}
           </button>
         </form>

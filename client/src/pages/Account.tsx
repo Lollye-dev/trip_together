@@ -4,14 +4,16 @@ import { useAuth } from "../contexts/AuthContext";
 import "../styles/Account.css";
 
 export default function Account() {
-  const { auth, logout } = useAuth();
+  const { auth, logout, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (isLoading) return;
+
     if (!auth) {
       navigate("/login");
     }
-  }, [auth, navigate]);
+  }, [auth, isLoading, navigate]);
 
   const handleLogout = () => {
     logout();
