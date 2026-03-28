@@ -22,66 +22,64 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
   useEffect(() => {
     if (!isLoaded || !inputRef.current) return;
 
-    if (placeAutocompleteRef.current) {
-      return;
-    }
+    const container = inputRef.current;
 
     const initAutocomplete = async () => {
       try {
         // @ts-ignore
-        const { PlaceAutocompleteElement } =
-          await google.maps.importLibrary("places");
+        const { PlaceAutocompleteElement } = (await google.maps.importLibrary(
+          "places",
+        )) as google.maps.PlacesLibrary;
+
         // @ts-ignore
         const autocomplete = new PlaceAutocompleteElement();
         placeAutocompleteRef.current = autocomplete;
 
-        if (inputRef.current) {
-          inputRef.current.innerHTML = "";
-          inputRef.current.appendChild(autocomplete);
-        }
+        container.innerHTML = "";
+        container.appendChild(autocomplete);
 
-        autocomplete.addEventListener("gmp-places-select", (event: Event) => {
-          const customEvent = event as unknown as {
-            place: {
-              name: string;
-              address_components: Array<{ types: string[]; long_name: string }>;
-              photos?: Array<{
-                getUrl: (opts: { maxWidth: number }) => string;
-              }>;
-              fetchFields: (opts: { fields: string[] }) => Promise<void>;
-            };
-          };
-          const place = customEvent.place;
-          if (!place) return;
+        let lastProcessed = "";
+        
+        const checkValueInterval = setInterval(() => {
+          const currentValue = (autocomplete as unknown as { value: string }).value;
+          
+          if (
+            currentValue &&
+            currentValue !== lastProcessed &&
+            currentValue.includes(",") &&
+            currentValue.length > 5
+          ) {
+            lastProcessed = currentValue;
+            handlePlaceSelect(currentValue);
+          }
+        }, 500);
 
-          place
-            .fetchFields({ fields: ["address_components", "name", "photos"] })
-            .then(() => {
-              const cityName = place.name || "";
-              const countryComp = place.address_components?.find(
-                (comp: { types: string[]; long_name: string }) =>
-                  comp.types.includes("country"),
-              );
-              const countryName = countryComp?.long_name || "";
-              const photoUrl =
-                (
-                  place.photos?.[0] as
-                    | { getUrl: (opts: { maxWidth: number }) => string }
-                    | undefined
-                )?.getUrl({ maxWidth: 400 }) || "";
-
-              setCity(cityName);
-              setCountry(countryName);
-              setImageUrl(photoUrl);
-            });
-        });
+        return () => clearInterval(checkValueInterval);
       } catch (error) {
-        console.error("Error loading Google Maps Places:", error);
+        console.error("Erreur Google Maps Places:", error);
       }
     };
 
-    initAutocomplete();
+    const cleanup = initAutocomplete();
+    return () => {
+      cleanup?.then((fn) => fn?.());
+    };
   }, [isLoaded]);
+
+  const handlePlaceSelect = (fullAddress: string) => {
+    if (!fullAddress || fullAddress.length < 3) {
+      return;
+    }
+
+    const parts = fullAddress.split(",").map((p) => p.trim());
+    
+    if (parts.length >= 2) {
+      setCity(parts[0]);
+      setCountry(parts[parts.length - 1]);
+    } else if (parts.length === 1) {
+      setCity(parts[0]);
+    }
+  };
 
   const { auth } = useAuth();
   const { tripId: routeTripId, id } = useParams();
@@ -112,15 +110,25 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
         },
       );
 
-      if (!response.ok) throw new Error("Erreur lors de l'ajout de l'étape");
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        const errorMsg =
+          responseData.error || "Erreur lors de l'ajout de l'étape";
+        toast.error(errorMsg);
+        return;
+      }
 
       setCity("");
       setCountry("");
       setImageUrl("");
 
       onStepAdded();
+      toast.success("Étape ajoutée avec succès");
     } catch (error) {
-      console.error(error);
+      const errorMsg = error instanceof Error ? error.message : "Erreur inconnue";
+      console.error("Erreur lors de l'ajout d'étape:", errorMsg);
+      toast.error(errorMsg);
     }
   };
 

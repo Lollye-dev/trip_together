@@ -17,6 +17,8 @@
   align-items: stretch;
   max-width: 800px;
   width: 100%;
+  overflow: visible;
+  position: relative;
 }
 
 .add-step-form label {
@@ -29,6 +31,8 @@
   gap: 0.5rem;
   flex: 1;
   min-width: 200px;
+  overflow: visible;
+  position: relative;
 }
 
 .add-btn {
@@ -52,11 +56,12 @@
 .input-container {
   width: 100%;
   background-color: var(--background);
-  overflow: hidden;
+  overflow: visible;
   border-radius: 8px;
   height: auto;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .add-step-form-group gmp-place-autocomplete {
@@ -72,6 +77,8 @@
   transition: border-color 0.2s;
   display: flex;
   align-items: center;
+  color-scheme: light;
+  --gmp-color-surface: #ffffff;
 }
 
 .add-step-form-group gmp-place-autocomplete:focus-within {

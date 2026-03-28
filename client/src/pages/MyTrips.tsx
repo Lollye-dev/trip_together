@@ -51,7 +51,6 @@ export default function MyTrips() {
     if (isLoading) return;
 
     if (!auth?.token) {
-      toast.error("Vous devez être connectés pour voir vos voyages");
       navigate("/login");
       return;
     }

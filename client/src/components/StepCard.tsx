@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import type { StepCardProps } from "../types/tripType";
 import type { CreateVotePayload, Vote, VotesStats } from "../types/voteType";
@@ -16,11 +16,11 @@ function StepCard({
   onVoteSuccess,
 }: StepCardProps) {
   const [allVotes, setAllVotes] = useState<Vote[]>([]);
-  const [loading, setLoading] = useState(true);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [comment, setComment] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [showVotes, setShowVotes] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [stepToDelete, setStepToDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -36,11 +36,9 @@ function StepCard({
     <img src="/logos/brown-thumb.png" className="brown-thumb" alt="Non" />
   );
 
-  useEffect(() => {
-    loadVotes();
-  }, []);
+  const loadVotes = useCallback(() => {
+    if (!token) return;
 
-  const loadVotes = () => {
     setLoading(true);
     setError(null);
 
@@ -85,7 +83,11 @@ function StepCard({
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [tripId, step.id, token, logout, navigate]);
+
+  useEffect(() => {
+    loadVotes();
+  }, [loadVotes]);
 
   const handleVote = (voteValue: boolean) => {
     setAlreadyVoted(true);

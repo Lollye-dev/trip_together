@@ -89,18 +89,17 @@ function Steps() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`
           },
         },
       );
 
-      const result: StepsResponse = await response.json();
-
+      
       if (response.status === 401) {
         handleUnauthorized();
         return;
       }
-
+      
       if (response.status === 400) {
         navigate("/", {
           state: {
@@ -112,7 +111,7 @@ function Steps() {
         });
         return;
       }
-
+      
       if (response.status === 403) {
         navigate("/", {
           state: {
@@ -124,11 +123,13 @@ function Steps() {
         });
         return;
       }
-
+      
       if (!response.ok) {
         throw new Error("Erreur chargement étapes");
       }
-
+      
+      const result: StepsResponse = await response.json();
+      
       if (!("steps" in result)) {
         toast.error("Données d'étapes invalides");
         return;
