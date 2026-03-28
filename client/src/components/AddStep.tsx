@@ -39,10 +39,11 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
         container.appendChild(autocomplete);
 
         let lastProcessed = "";
-        
+
         const checkValueInterval = setInterval(() => {
-          const currentValue = (autocomplete as unknown as { value: string }).value;
-          
+          const currentValue = (autocomplete as unknown as { value: string })
+            .value;
+
           if (
             currentValue &&
             currentValue !== lastProcessed &&
@@ -72,7 +73,7 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
     }
 
     const parts = fullAddress.split(",").map((p) => p.trim());
-    
+
     if (parts.length >= 2) {
       setCity(parts[0]);
       setCountry(parts[parts.length - 1]);
@@ -126,7 +127,8 @@ export default function AddStep({ onStepAdded }: AddStepProps) {
       onStepAdded();
       toast.success("Étape ajoutée avec succès");
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Erreur inconnue";
+      const errorMsg =
+        error instanceof Error ? error.message : "Erreur inconnue";
       console.error("Erreur lors de l'ajout d'étape:", errorMsg);
       toast.error(errorMsg);
     }
